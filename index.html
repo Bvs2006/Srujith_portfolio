@@ -200,13 +200,27 @@ section { padding: 80px 48px; max-width: 1100px; margin: 0 auto; }
   border-radius: 12px; padding: 28px; transition: all 0.3s; display: flex; flex-direction: column;
 }
 .project-card:hover { transform: translateY(-4px); border-color: var(--accent4); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+.project-card.ml-card:hover { border-color: var(--accent2); }
 .proj-lang { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--accent4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+.proj-lang.ml { color: var(--accent2); }
 .proj-name { font-size: 18px; font-weight: 600; margin-bottom: 10px; }
 .proj-desc { font-size: 13px; color: var(--dim); line-height: 1.7; flex: 1; }
 .proj-footer { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .proj-tag { font-size: 11px; padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,0.04); color: var(--muted); font-family: 'DM Mono', monospace; }
+.proj-tag.ml { background: rgba(52,211,153,0.07); color: var(--accent2); border: 1px solid rgba(52,211,153,0.2); }
 .proj-link { margin-left: auto; color: var(--accent); font-size: 13px; text-decoration: none; font-weight: 500; }
 .proj-link:hover { color: var(--text); }
+
+/* NEW badge */
+.new-badge {
+  display: inline-block; font-size: 10px; font-family: 'DM Mono', monospace;
+  background: rgba(52,211,153,0.15); color: var(--accent2);
+  border: 1px solid rgba(52,211,153,0.4); padding: 2px 8px; border-radius: 20px;
+  letter-spacing: 1px; margin-left: 8px; vertical-align: middle; animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; } 50% { opacity: 0.6; }
+}
 
 /* CERTIFICATIONS */
 .certs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
@@ -316,7 +330,7 @@ footer {
         <div class="stat-label">Problems Solved</div>
       </div>
       <div class="stat-item">
-        <div class="stat-num">5</div>
+        <div class="stat-num">6</div>
         <div class="stat-label">Projects Built</div>
       </div>
       <div class="stat-item">
@@ -346,7 +360,7 @@ footer {
         Currently pursuing my B.Tech in Artificial Intelligence &amp; Machine Learning at Aditya University, I spend my days learning how machines can <span class="hl">see, understand, and reason</span> — and my nights solving competitive programming challenges to sharpen the algorithmic thinking that underpins every great AI system.
       </p>
       <p>
-        From exploring <span class="hl">neural networks and deep learning</span> architectures to building Python data pipelines with NumPy and Pandas, I'm actively constructing the foundation needed to work on cutting-edge ML models. I believe clean code and strong fundamentals in DSA are non-negotiable — they are the backbone of every scalable AI solution.
+        From training <span class="hl">supervised ML models</span> with scikit-learn and evaluating them with precision/recall metrics, to building Python data pipelines with NumPy, Pandas, and NLTK — I'm actively constructing the foundation needed to work on cutting-edge ML systems. I believe clean code and strong DSA fundamentals are the backbone of every scalable AI solution.
       </p>
       <p>
         My goal is to contribute to projects where AI creates <span class="hl">genuine human impact</span> — whether in education (like my NoteWise platform), automation, or intelligent software systems. I'm a fast learner, a team collaborator, and always chasing the next hard problem to crack.
@@ -356,12 +370,12 @@ footer {
       <div class="ai-card">
         <div class="ai-card-icon">🧠</div>
         <div class="ai-card-title">Machine Learning</div>
-        <div class="ai-card-body">Actively learning supervised &amp; unsupervised learning, model evaluation, and Python-based ML workflows.</div>
+        <div class="ai-card-body">Trained supervised classification models using scikit-learn, evaluated with F1, precision, recall, and cross-validation.</div>
       </div>
       <div class="ai-card">
         <div class="ai-card-icon">📊</div>
         <div class="ai-card-title">Data &amp; Analytics</div>
-        <div class="ai-card-body">Hands-on with NumPy, Pandas, and MS Excel for data wrangling, analysis, and visualization tasks.</div>
+        <div class="ai-card-body">Hands-on with NumPy, Pandas, NLTK, and MS Excel for EDA, data wrangling, and visualization tasks.</div>
       </div>
       <div class="ai-card">
         <div class="ai-card-icon">🤖</div>
@@ -385,7 +399,6 @@ footer {
   </div>
   <div class="profiles-grid">
 
-    <!-- LeetCode -->
     <a href="https://leetcode.com/u/srujithcoder/" target="_blank" class="profile-card reveal" style="--card-accent:#ffa116">
       <div class="profile-header">
         <div class="platform-icon" style="background:rgba(255,161,22,0.12);color:#ffa116">LC</div>
@@ -406,7 +419,6 @@ footer {
       </div>
     </a>
 
-    <!-- Codeforces -->
     <a href="https://codeforces.com/profile/bvs_coder" target="_blank" class="profile-card reveal" style="--card-accent:#1890ff">
       <div class="profile-header">
         <div class="platform-icon" style="background:rgba(24,144,255,0.12);color:#1890ff">CF</div>
@@ -426,7 +438,6 @@ footer {
       </div>
     </a>
 
-    <!-- HackerRank -->
     <a href="https://www.hackerrank.com/profile/srujith7780" target="_blank" class="profile-card reveal" style="--card-accent:#2ec866">
       <div class="profile-header">
         <div class="platform-icon" style="background:rgba(46,200,102,0.12);color:#2ec866">HR</div>
@@ -447,7 +458,6 @@ footer {
       </div>
     </a>
 
-    <!-- GitHub -->
     <a href="https://github.com/Bvs2006" target="_blank" class="profile-card reveal" style="--card-accent:#c9d1d9">
       <div class="profile-header">
         <div class="platform-icon" style="background:rgba(201,209,217,0.12);color:#c9d1d9">GH</div>
@@ -458,7 +468,7 @@ footer {
         <div class="ext-link">↗</div>
       </div>
       <div class="profile-stats">
-        <div class="pstat"><div class="pstat-val" style="color:#c9d1d9">5+</div><div class="pstat-key">Repositories</div></div>
+        <div class="pstat"><div class="pstat-val" style="color:#c9d1d9">6+</div><div class="pstat-key">Repositories</div></div>
         <div class="pstat"><div class="pstat-val" style="color:#c9d1d9">Active</div><div class="pstat-key">Status</div></div>
       </div>
       <div class="profile-badge-row">
@@ -467,7 +477,6 @@ footer {
       </div>
     </a>
 
-    <!-- GeeksForGeeks -->
     <a href="https://www.geeksforgeeks.org/user/bvs2006/" target="_blank" class="profile-card reveal" style="--card-accent:#308d46">
       <div class="profile-header">
         <div class="platform-icon" style="background:rgba(48,141,70,0.12);color:#308d46">GFG</div>
@@ -487,7 +496,6 @@ footer {
       </div>
     </a>
 
-    <!-- CodeChef -->
     <a href="https://www.codechef.com/users/bvs_coder" target="_blank" class="profile-card reveal" style="--card-accent:#e8c27a">
       <div class="profile-header">
         <div class="platform-icon" style="background:rgba(232,194,122,0.12);color:#e8c27a">CC</div>
@@ -554,8 +562,14 @@ footer {
     <div class="skill-group">
       <div class="skill-group-title">AI &amp; ML</div>
       <div class="skill-tags">
-        <span class="skill-tag">Supervised Learning</span><span class="skill-tag">Data Analysis</span>
-        <span class="skill-tag">Model Evaluation</span><span class="skill-tag">Feature Engineering</span>
+        <span class="skill-tag">scikit-learn</span>
+        <span class="skill-tag">NLTK</span>
+        <span class="skill-tag">Supervised Learning</span>
+        <span class="skill-tag">Unsupervised Learning</span>
+        <span class="skill-tag">Data Analysis</span>
+        <span class="skill-tag">Model Evaluation</span>
+        <span class="skill-tag">Feature Engineering</span>
+        <span class="skill-tag">TF-IDF</span>
       </div>
     </div>
   </div>
@@ -568,6 +582,20 @@ footer {
     <div class="divider"></div>
   </div>
   <div class="projects-grid">
+
+    <!-- NEW ML PROJECT — shown first -->
+    <div class="project-card ml-card reveal">
+      <div class="proj-lang ml">Python · scikit-learn · NLTK</div>
+      <div class="proj-name">Movie Sentiment Classifier <span class="new-badge">NEW</span></div>
+      <div class="proj-desc">Binary text classification model trained on the IMDb dataset (50,000 samples) using Logistic Regression &amp; Naive Bayes — achieving 88%+ accuracy. Applied TF-IDF vectorization, stopword removal, and tokenization via NLTK. Evaluated with precision, recall, F1-score, confusion matrix, and cross-validation. EDA performed with pandas &amp; matplotlib.</div>
+      <div class="proj-footer">
+        <span class="proj-tag ml">ML</span>
+        <span class="proj-tag ml">NLP</span>
+        <span class="proj-tag ml">Classification</span>
+        <a href="https://github.com/Bvs2006" target="_blank" class="proj-link">GitHub ↗</a>
+      </div>
+    </div>
+
     <div class="project-card reveal">
       <div class="proj-lang">C++</div>
       <div class="proj-name">Mini GameHub</div>
@@ -577,6 +605,7 @@ footer {
         <a href="https://github.com/Bvs2006/puzzle_games" target="_blank" class="proj-link">GitHub ↗</a>
       </div>
     </div>
+
     <div class="project-card reveal">
       <div class="proj-lang">React · Firebase</div>
       <div class="proj-name">NoteWise</div>
@@ -586,6 +615,7 @@ footer {
         <a href="https://github.com/Bvs2006/notewise_web" target="_blank" class="proj-link">GitHub ↗</a>
       </div>
     </div>
+
     <div class="project-card reveal">
       <div class="proj-lang">React · MongoDB</div>
       <div class="proj-name">Emporium</div>
@@ -595,6 +625,7 @@ footer {
         <a href="https://github.com/Bvs2006/E-commerce_web" target="_blank" class="proj-link">GitHub ↗</a>
       </div>
     </div>
+
     <div class="project-card reveal">
       <div class="proj-lang">Java · Swing</div>
       <div class="proj-name">Resume Builder</div>
@@ -604,6 +635,7 @@ footer {
         <a href="https://github.com/Bvs2006/ResumeBuilder__java" target="_blank" class="proj-link">GitHub ↗</a>
       </div>
     </div>
+
     <div class="project-card reveal">
       <div class="proj-lang">Java · MySQL</div>
       <div class="proj-name">Swing MySQL CRUD App</div>
@@ -613,6 +645,7 @@ footer {
         <a href="https://github.com/Bvs2006/CRUDSQL_application" target="_blank" class="proj-link">GitHub ↗</a>
       </div>
     </div>
+
   </div>
 </section>
 
@@ -628,7 +661,7 @@ footer {
     <div class="cert-card"><div class="cert-dot" style="background:#00a4ef"></div><div><div class="cert-name">Power Platform Fundamentals</div><div class="cert-issuer">Microsoft</div></div></div>
     <div class="cert-card"><div class="cert-dot" style="background:#2ec866"></div><div><div class="cert-name">SQL (Basic)</div><div class="cert-issuer">HackerRank</div></div></div>
     <div class="cert-card"><div class="cert-dot" style="background:#2ec866"></div><div><div class="cert-name">Problem Solving (Basic)</div><div class="cert-issuer">HackerRank</div></div></div>
-     <div class="cert-card"><div class="cert-dot" style="background:#0070d1"></div><div><div class="cert-name">C Essentials</div><div class="cert-issuer">Cisco</div></div></div>
+    <div class="cert-card"><div class="cert-dot" style="background:#0070d1"></div><div><div class="cert-name">C Essentials</div><div class="cert-issuer">Cisco</div></div></div>
     <div class="cert-card"><div class="cert-dot" style="background:#0070d1"></div><div><div class="cert-name">C++ Essentials</div><div class="cert-issuer">Cisco</div></div></div>
   </div>
 </section>
@@ -667,7 +700,7 @@ footer {
     <div class="contact-links">
       <a href="mailto:venkatasrujithb@gmail.com" class="contact-link">✉ Email</a>
       <a href="https://www.linkedin.com/in/venkata-srujith-bellamkonda-b78626336/" target="_blank" class="contact-link">in LinkedIn</a>
-      <a href="https://github.com/Bvs2006" target="_blank" class="contact-link">&#9417; GitHub</a>
+      <a href="https://github.com/Bvs2006" target="_blank" class="contact-link">⊗ GitHub</a>
     </div>
   </div>
 </section>
@@ -679,7 +712,6 @@ footer {
 </div>
 
 <script>
-// Particle canvas
 const canvas = document.getElementById('bg');
 const ctx = canvas.getContext('2d');
 let W, H, pts = [];
@@ -717,7 +749,6 @@ function draw() {
 }
 draw();
 
-// Scroll reveal
 const observer = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.1 });
