@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Card3D from "./Card3D";
 
 interface WelcomeScreenProps {
@@ -24,7 +24,19 @@ export default function WelcomeScreen({
   const [isClosing, setIsClosing] = useState(false);
   const [timeStr, setTimeStr] = useState("");
   const [dateStr, setDateStr] = useState("");
+  const [countdown, setCountdown] = useState(3);
+  const hasTriggeredRef = useRef(false);
 
+  const handleEnter = () => {
+    if (hasTriggeredRef.current) return;
+    hasTriggeredRef.current = true;
+    setIsClosing(true);
+    setTimeout(() => {
+      onEnter();
+    }, 450);
+  };
+
+  // Clock update
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -56,12 +68,21 @@ export default function WelcomeScreen({
     return () => clearInterval(interval);
   }, []);
 
-  const handleEnter = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      onEnter();
-    }, 500);
-  };
+  // Automatic redirect countdown (3 seconds)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleEnter();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div
@@ -242,13 +263,13 @@ export default function WelcomeScreen({
               gap: "0.75rem",
               width: "100%",
               maxWidth: 480,
-              marginBottom: "2.5rem",
+              marginBottom: "2.25rem",
             }}
           >
             {[
-              { val: cgpa, label: "CGPA", color: "#6366f1", icon: "⭐" },
-              { val: problemsCount, label: "CP Solved", color: "#06b6d4", icon: "⚡" },
-              { val: "6+", label: "Projects", color: "#10b981", icon: "🚀" },
+              { val: cgpa, label: "CGPA", color: "#6366f1" },
+              { val: problemsCount, label: "CP Solved", color: "#06b6d4" },
+              { val: "6+", label: "Projects", color: "#10b981" },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -272,40 +293,49 @@ export default function WelcomeScreen({
             ))}
           </div>
 
-          {/* Enter Button */}
-          <button
-            onClick={handleEnter}
-            style={{
-              transform: "translateZ(50px)",
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: "0.95rem",
-              letterSpacing: "0.05em",
-              textTransform: "uppercase",
-              fontWeight: 800,
-              background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
-              color: "#ffffff",
-              border: "none",
-              borderRadius: "16px",
-              padding: "1.1rem 3.25rem",
-              cursor: "pointer",
-              boxShadow: "0 12px 35px rgba(99, 102, 241, 0.45), 0 0 25px rgba(6, 182, 212, 0.3)",
-              transition: "all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.85rem",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateZ(60px) scale(1.04)";
-              e.currentTarget.style.boxShadow = "0 18px 50px rgba(99, 102, 241, 0.65), 0 0 35px rgba(6, 182, 212, 0.5)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateZ(50px) scale(1)";
-              e.currentTarget.style.boxShadow = "0 12px 35px rgba(99, 102, 241, 0.45), 0 0 25px rgba(6, 182, 212, 0.3)";
-            }}
-          >
-            Enter Experience
-            <span style={{ fontSize: "1.2rem" }}>→</span>
-          </button>
+          {/* Enter Button with Auto Redirect Indicator */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.85rem", transform: "translateZ(50px)" }}>
+            <button
+              onClick={handleEnter}
+              style={{
+                fontFamily: "'Outfit', sans-serif",
+                fontSize: "0.95rem",
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                fontWeight: 800,
+                background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+                color: "#ffffff",
+                border: "none",
+                borderRadius: "16px",
+                padding: "1.1rem 3.25rem",
+                cursor: "pointer",
+                boxShadow: "0 12px 35px rgba(99, 102, 241, 0.45), 0 0 25px rgba(6, 182, 212, 0.3)",
+                transition: "all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.85rem",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "scale(1.04)";
+                e.currentTarget.style.boxShadow = "0 18px 50px rgba(99, 102, 241, 0.65), 0 0 35px rgba(6, 182, 212, 0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "0 12px 35px rgba(99, 102, 241, 0.45), 0 0 25px rgba(6, 182, 212, 0.3)";
+              }}
+            >
+              Enter Experience
+              <span style={{ fontSize: "1.2rem" }}>→</span>
+            </button>
+
+            {/* Auto-redirect countdown pulse */}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#06b6d4", boxShadow: "0 0 8px #06b6d4" }} />
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: isDark ? "#94a3b8" : "#64748b", letterSpacing: "0.05em" }}>
+                Auto-entering in {countdown}s…
+              </span>
+            </div>
+          </div>
         </div>
       </Card3D>
     </div>
