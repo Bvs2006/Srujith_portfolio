@@ -870,7 +870,7 @@ export default function App() {
                       {personalInfo.name}
                     </h3>
                     <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: "#38bdf8", margin: "2px 0 0 0" }}>
-                      @{personalInfo.university.split(",")[0]}
+                      @{(personalInfo.university || "Aditya University").split(",")[0]}
                     </p>
                   </div>
                 </div>
