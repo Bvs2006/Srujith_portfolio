@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useSyncExternalStore } from "react";
 import { supabase, getFromSupabase, saveToSupabase } from "../lib/supabase";
 
 export interface ProjectItem {
@@ -85,6 +85,30 @@ export interface PersonalInfo {
   resumeUrl: string;
 }
 
+export const DEFAULT_PERSONAL_INFO: PersonalInfo = {
+  name: "Venkata Srujith Bellamkonda",
+  title: "AI & ML Engineer · Full-Stack Developer",
+  tagline: "Building at the intersection of intelligent algorithms and scalable software — specializing in AI/ML, competitive programming, and modern full-stack systems.",
+  bio1: "I'm Srujith — a B.Tech AI & ML student at Aditya University (CGPA 8.87) passionate about machine learning, competitive algorithms, and engineering resilient digital products.",
+  bio2: "674+ competitive programming problems solved across six platforms (360 LeetCode, 208 CodeChef, 58 GFG, 48 HackerRank), supervised ML models with scikit-learn, and full-stack apps in React, Java, C++, and Python.",
+  cgpa: "8.87",
+  problemsCount: "674",
+  projectsCount: "6",
+  university: "Aditya University, Surampalem",
+  degree: "B.Tech · AI & ML · 2024–Present",
+  class12: "Narayana Jr. College · 95.8%",
+  class12Score: "95.8%",
+  email: "venkatasrujithb@gmail.com",
+  github: "https://github.com/Bvs2006",
+  linkedin: "https://linkedin.com/in/venkata-srujith-bellamkonda-b78626336/",
+  leetcode: "https://leetcode.com/srujithcoder",
+  codechef: "https://www.codechef.com/users/bvs_coder",
+  codeforces: "https://codeforces.com/profile/Bvs2006",
+  hackerrank: "https://www.hackerrank.com/profile/srujith7780",
+  geeksforgeeks: "https://www.geeksforgeeks.org/user/bvs2006/",
+  resumeUrl: "https://drive.google.com/file/d/1_ExampleResumeLink/view?usp=sharing",
+};
+
 export const DEFAULT_COMPETITIVE_STATS: CompetitiveStats = {
   totalSolved: 674,
   leetcode: {
@@ -118,30 +142,6 @@ export const DEFAULT_COMPETITIVE_STATS: CompetitiveStats = {
     solved: 58,
     score: 162,
   },
-};
-
-export const DEFAULT_PERSONAL_INFO: PersonalInfo = {
-  name: "Venkata Srujith Bellamkonda",
-  title: "AI & ML Engineer · Full-Stack Developer",
-  tagline: "Building at the intersection of intelligent algorithms and scalable software — specializing in AI/ML, competitive programming, and modern full-stack systems.",
-  bio1: "I'm Srujith — a B.Tech AI & ML student at Aditya University (CGPA 8.87) passionate about machine learning, competitive algorithms, and engineering resilient digital products.",
-  bio2: "674+ competitive programming problems solved across six platforms (360 LeetCode, 208 CodeChef, 58 GFG, 48 HackerRank), supervised ML models with scikit-learn, and full-stack apps in React, Java, C++, and Python.",
-  cgpa: "8.87",
-  problemsCount: "674",
-  projectsCount: "6",
-  university: "Aditya University, Surampalem",
-  degree: "B.Tech · AI & ML · 2024–Present",
-  class12: "Narayana Jr. College · 95.8%",
-  class12Score: "95.8%",
-  email: "venkatasrujithb@gmail.com",
-  github: "https://github.com/Bvs2006",
-  linkedin: "https://linkedin.com/in/venkata-srujith-bellamkonda-b78626336/",
-  leetcode: "https://leetcode.com/srujithcoder",
-  codechef: "https://www.codechef.com/users/bvs_coder",
-  codeforces: "https://codeforces.com/profile/Bvs2006",
-  hackerrank: "https://www.hackerrank.com/profile/srujith7780",
-  geeksforgeeks: "https://www.geeksforgeeks.org/user/bvs2006/",
-  resumeUrl: "https://drive.google.com/file/d/1_ExampleResumeLink/view?usp=sharing",
 };
 
 export const DEFAULT_PROJECTS: ProjectItem[] = [
@@ -310,7 +310,13 @@ export const STORAGE_KEYS = {
   COMPETITIVE: "competitive_data",
 };
 
-const SYNC_EVENT = "portfolio_store_sync_event";
+export interface PortfolioState {
+  personalInfo: PersonalInfo;
+  projects: ProjectItem[];
+  certs: CertItem[];
+  skills: Record<string, string[]>;
+  competitiveStats: CompetitiveStats;
+}
 
 function readLocal<T>(key: string, fallback: T): T {
   try {
@@ -320,7 +326,7 @@ function readLocal<T>(key: string, fallback: T): T {
     if (typeof fallback === "object" && fallback !== null && !Array.isArray(fallback)) {
       return { ...fallback, ...parsed };
     }
-    return parsed;
+    return Array.isArray(fallback) ? (Array.isArray(parsed) ? parsed : fallback) : parsed;
   } catch {
     return fallback;
   }
@@ -329,231 +335,217 @@ function readLocal<T>(key: string, fallback: T): T {
 function writeLocal<T>(key: string, val: T): void {
   try {
     localStorage.setItem(`portfolio_${key}_v5`, JSON.stringify(val));
-    window.dispatchEvent(new CustomEvent(SYNC_EVENT));
   } catch {
     // ignore
   }
 }
 
-export function usePortfolioStore() {
-  const [personalInfo, setPersonalInfoState] = useState<PersonalInfo>(() =>
-    readLocal(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO)
-  );
+// ── Singleton Global Store ───────────────────────────────────────────────────
+let globalState: PortfolioState = {
+  personalInfo: readLocal(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO),
+  projects: readLocal(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS),
+  certs: readLocal(STORAGE_KEYS.CERTS, DEFAULT_CERTS),
+  skills: readLocal(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS),
+  competitiveStats: readLocal(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS),
+};
 
-  const [projects, setProjectsState] = useState<ProjectItem[]>(() =>
-    readLocal(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS)
-  );
+const listeners = new Set<() => void>();
 
-  const [certs, setCertsState] = useState<CertItem[]>(() =>
-    readLocal(STORAGE_KEYS.CERTS, DEFAULT_CERTS)
-  );
+function notify() {
+  listeners.forEach((l) => l());
+}
 
-  const [skills, setSkillsState] = useState<Record<string, string[]>>(() =>
-    readLocal(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS)
-  );
+function updateGlobalState(partial: Partial<PortfolioState>) {
+  globalState = { ...globalState, ...partial };
+  notify();
+}
 
-  const [competitiveStats, setCompetitiveStatsState] = useState<CompetitiveStats>(() =>
-    readLocal(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS)
-  );
+let hasInitializedCloud = false;
 
-  // Sync from Supabase on mount
-  useEffect(() => {
-    let isMounted = true;
-    async function loadCloudData() {
-      try {
-        const [cloudPersonal, cloudProjects, cloudCerts, cloudSkills, cloudCompetitive] = await Promise.all([
-          getFromSupabase(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO),
-          getFromSupabase(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS),
-          getFromSupabase(STORAGE_KEYS.CERTS, DEFAULT_CERTS),
-          getFromSupabase(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS),
-          getFromSupabase(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS),
-        ]);
+function initCloudSync() {
+  if (hasInitializedCloud) return;
+  hasInitializedCloud = true;
 
-        if (isMounted) {
-          if (cloudPersonal) {
-            setPersonalInfoState(cloudPersonal);
-            writeLocal(STORAGE_KEYS.PERSONAL, cloudPersonal);
-          }
-          if (cloudProjects && Array.isArray(cloudProjects)) {
-            setProjectsState(cloudProjects);
-            writeLocal(STORAGE_KEYS.PROJECTS, cloudProjects);
-          }
-          if (cloudCerts && Array.isArray(cloudCerts)) {
-            setCertsState(cloudCerts);
-            writeLocal(STORAGE_KEYS.CERTS, cloudCerts);
-          }
-          if (cloudSkills) {
-            setSkillsState(cloudSkills);
-            writeLocal(STORAGE_KEYS.SKILLS, cloudSkills);
-          }
-          if (cloudCompetitive) {
-            setCompetitiveStatsState(cloudCompetitive);
-            writeLocal(STORAGE_KEYS.COMPETITIVE, cloudCompetitive);
-          }
-        }
-      } catch (err) {
-        console.warn("Could not load from Supabase cloud:", err);
+  // Initial load from Supabase
+  Promise.all([
+    getFromSupabase(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO),
+    getFromSupabase(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS),
+    getFromSupabase(STORAGE_KEYS.CERTS, DEFAULT_CERTS),
+    getFromSupabase(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS),
+    getFromSupabase(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS),
+  ])
+    .then(([cloudPersonal, cloudProjects, cloudCerts, cloudSkills, cloudCompetitive]) => {
+      const updated: Partial<PortfolioState> = {};
+      if (cloudPersonal) {
+        updated.personalInfo = { ...DEFAULT_PERSONAL_INFO, ...cloudPersonal };
+        writeLocal(STORAGE_KEYS.PERSONAL, updated.personalInfo);
       }
-    }
+      if (cloudProjects && Array.isArray(cloudProjects)) {
+        updated.projects = cloudProjects;
+        writeLocal(STORAGE_KEYS.PROJECTS, cloudProjects);
+      }
+      if (cloudCerts && Array.isArray(cloudCerts)) {
+        updated.certs = cloudCerts;
+        writeLocal(STORAGE_KEYS.CERTS, cloudCerts);
+      }
+      if (cloudSkills && typeof cloudSkills === "object") {
+        updated.skills = { ...DEFAULT_SKILLS, ...cloudSkills };
+        writeLocal(STORAGE_KEYS.SKILLS, updated.skills);
+      }
+      if (cloudCompetitive) {
+        updated.competitiveStats = { ...DEFAULT_COMPETITIVE_STATS, ...cloudCompetitive };
+        writeLocal(STORAGE_KEYS.COMPETITIVE, updated.competitiveStats);
+      }
+      updateGlobalState(updated);
+    })
+    .catch((err) => console.warn("Supabase fetch warning:", err));
 
-    loadCloudData();
-
-    // Setup Supabase Realtime subscription
-    const channel = supabase
-      .channel("portfolio_content_changes")
+  // Supabase Realtime Listener
+  try {
+    supabase
+      .channel("portfolio_global_changes")
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "portfolio_content" },
         (payload) => {
-          const newRow = payload.new as { key?: string; data?: unknown };
-          if (newRow && newRow.key && newRow.data) {
-            if (newRow.key === STORAGE_KEYS.PERSONAL) {
-              setPersonalInfoState(newRow.data as PersonalInfo);
-              writeLocal(STORAGE_KEYS.PERSONAL, newRow.data);
-            } else if (newRow.key === STORAGE_KEYS.PROJECTS) {
-              setProjectsState(newRow.data as ProjectItem[]);
-              writeLocal(STORAGE_KEYS.PROJECTS, newRow.data);
-            } else if (newRow.key === STORAGE_KEYS.CERTS) {
-              setCertsState(newRow.data as CertItem[]);
-              writeLocal(STORAGE_KEYS.CERTS, newRow.data);
-            } else if (newRow.key === STORAGE_KEYS.SKILLS) {
-              setSkillsState(newRow.data as Record<string, string[]>);
-              writeLocal(STORAGE_KEYS.SKILLS, newRow.data);
-            } else if (newRow.key === STORAGE_KEYS.COMPETITIVE) {
-              setCompetitiveStatsState(newRow.data as CompetitiveStats);
-              writeLocal(STORAGE_KEYS.COMPETITIVE, newRow.data);
+          const row = payload.new as { key?: string; data?: unknown };
+          if (row?.key && row?.data) {
+            const updated: Partial<PortfolioState> = {};
+            if (row.key === STORAGE_KEYS.PERSONAL) {
+              updated.personalInfo = { ...DEFAULT_PERSONAL_INFO, ...(row.data as object) };
+              writeLocal(STORAGE_KEYS.PERSONAL, updated.personalInfo);
+            } else if (row.key === STORAGE_KEYS.PROJECTS && Array.isArray(row.data)) {
+              updated.projects = row.data as ProjectItem[];
+              writeLocal(STORAGE_KEYS.PROJECTS, updated.projects);
+            } else if (row.key === STORAGE_KEYS.CERTS && Array.isArray(row.data)) {
+              updated.certs = row.data as CertItem[];
+              writeLocal(STORAGE_KEYS.CERTS, updated.certs);
+            } else if (row.key === STORAGE_KEYS.SKILLS && typeof row.data === "object") {
+              updated.skills = { ...DEFAULT_SKILLS, ...(row.data as object) };
+              writeLocal(STORAGE_KEYS.SKILLS, updated.skills);
+            } else if (row.key === STORAGE_KEYS.COMPETITIVE && typeof row.data === "object") {
+              updated.competitiveStats = { ...DEFAULT_COMPETITIVE_STATS, ...(row.data as object) };
+              writeLocal(STORAGE_KEYS.COMPETITIVE, updated.competitiveStats);
             }
+            updateGlobalState(updated);
           }
         }
       )
       .subscribe();
+  } catch (err) {
+    console.warn("Supabase realtime subscription warning:", err);
+  }
+}
 
-    return () => {
-      isMounted = false;
-      supabase.removeChannel(channel);
-    };
-  }, []);
+// Subscribe helper for useSyncExternalStore
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  initCloudSync();
+  return () => {
+    listeners.delete(listener);
+  };
+}
 
-  // Sync state whenever storage or custom sync event fires
-  const reloadFromStorage = useCallback(() => {
-    setPersonalInfoState(readLocal(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO));
-    setProjectsState(readLocal(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS));
-    setCertsState(readLocal(STORAGE_KEYS.CERTS, DEFAULT_CERTS));
-    setSkillsState(readLocal(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS));
-    setCompetitiveStatsState(readLocal(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS));
-  }, []);
+function getSnapshot(): PortfolioState {
+  return globalState;
+}
 
-  useEffect(() => {
-    const handleSync = () => reloadFromStorage();
-    window.addEventListener(SYNC_EVENT, handleSync);
-    window.addEventListener("storage", handleSync);
-    return () => {
-      window.removeEventListener(SYNC_EVENT, handleSync);
-      window.removeEventListener("storage", handleSync);
-    };
-  }, [reloadFromStorage]);
+export function usePortfolioStore() {
+  const state = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
-  // Actions that write to local cache AND save to Supabase cloud
   const updatePersonalInfo = (info: Partial<PersonalInfo>) => {
-    const current = readLocal(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO);
-    const next = { ...current, ...info };
-    setPersonalInfoState(next);
+    const next = { ...state.personalInfo, ...info };
     writeLocal(STORAGE_KEYS.PERSONAL, next);
+    updateGlobalState({ personalInfo: next });
     saveToSupabase(STORAGE_KEYS.PERSONAL, next);
   };
 
   const updateCompetitiveStats = (stats: Partial<CompetitiveStats>) => {
-    const current = readLocal(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS);
-    const next = { ...current, ...stats };
-    setCompetitiveStatsState(next);
+    const next = { ...state.competitiveStats, ...stats };
     writeLocal(STORAGE_KEYS.COMPETITIVE, next);
+    updateGlobalState({ competitiveStats: next });
     saveToSupabase(STORAGE_KEYS.COMPETITIVE, next);
   };
 
   const addProject = (project: Omit<ProjectItem, "id">) => {
-    const current = readLocal(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS);
     const newProject: ProjectItem = {
       ...project,
       id: `proj-${Date.now()}`,
     };
-    const next = [newProject, ...current];
-    setProjectsState(next);
+    const next = [newProject, ...state.projects];
     writeLocal(STORAGE_KEYS.PROJECTS, next);
+    updateGlobalState({ projects: next });
     saveToSupabase(STORAGE_KEYS.PROJECTS, next);
   };
 
   const updateProject = (id: string, project: Partial<ProjectItem>) => {
-    const current = readLocal(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS);
-    const next = current.map((p) => (p.id === id ? { ...p, ...project } : p));
-    setProjectsState(next);
+    const next = state.projects.map((p) => (p.id === id ? { ...p, ...project } : p));
     writeLocal(STORAGE_KEYS.PROJECTS, next);
+    updateGlobalState({ projects: next });
     saveToSupabase(STORAGE_KEYS.PROJECTS, next);
   };
 
   const deleteProject = (id: string) => {
-    const current = readLocal(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS);
-    const next = current.filter((p) => p.id !== id);
-    setProjectsState(next);
+    const next = state.projects.filter((p) => p.id !== id);
     writeLocal(STORAGE_KEYS.PROJECTS, next);
+    updateGlobalState({ projects: next });
     saveToSupabase(STORAGE_KEYS.PROJECTS, next);
   };
 
   const addCert = (cert: Omit<CertItem, "id">) => {
-    const current = readLocal(STORAGE_KEYS.CERTS, DEFAULT_CERTS);
     const newCert: CertItem = {
       ...cert,
       id: `cert-${Date.now()}`,
     };
-    const next = [newCert, ...current];
-    setCertsState(next);
+    const next = [newCert, ...state.certs];
     writeLocal(STORAGE_KEYS.CERTS, next);
+    updateGlobalState({ certs: next });
     saveToSupabase(STORAGE_KEYS.CERTS, next);
   };
 
   const updateCert = (id: string, cert: Partial<CertItem>) => {
-    const current = readLocal(STORAGE_KEYS.CERTS, DEFAULT_CERTS);
-    const next = current.map((c) => (c.id === id ? { ...c, ...cert } : c));
-    setCertsState(next);
+    const next = state.certs.map((c) => (c.id === id ? { ...c, ...cert } : c));
     writeLocal(STORAGE_KEYS.CERTS, next);
+    updateGlobalState({ certs: next });
     saveToSupabase(STORAGE_KEYS.CERTS, next);
   };
 
   const deleteCert = (id: string) => {
-    const current = readLocal(STORAGE_KEYS.CERTS, DEFAULT_CERTS);
-    const next = current.filter((c) => c.id !== id);
-    setCertsState(next);
+    const next = state.certs.filter((c) => c.id !== id);
     writeLocal(STORAGE_KEYS.CERTS, next);
+    updateGlobalState({ certs: next });
     saveToSupabase(STORAGE_KEYS.CERTS, next);
   };
 
   const updateSkillCategory = (category: string, items: string[]) => {
-    const current = readLocal(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS);
-    const next = { ...current, [category]: items };
-    setSkillsState(next);
+    const next = { ...state.skills, [category]: items };
     writeLocal(STORAGE_KEYS.SKILLS, next);
+    updateGlobalState({ skills: next });
     saveToSupabase(STORAGE_KEYS.SKILLS, next);
   };
 
   const deleteSkillCategory = (category: string) => {
-    const current = readLocal(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS);
-    const next = { ...current };
+    const next = { ...state.skills };
     delete next[category];
-    setSkillsState(next);
     writeLocal(STORAGE_KEYS.SKILLS, next);
+    updateGlobalState({ skills: next });
     saveToSupabase(STORAGE_KEYS.SKILLS, next);
   };
 
   const resetToDefaults = () => {
-    setPersonalInfoState(DEFAULT_PERSONAL_INFO);
-    setProjectsState(DEFAULT_PROJECTS);
-    setCertsState(DEFAULT_CERTS);
-    setSkillsState(DEFAULT_SKILLS);
-    setCompetitiveStatsState(DEFAULT_COMPETITIVE_STATS);
+    const resetState: PortfolioState = {
+      personalInfo: DEFAULT_PERSONAL_INFO,
+      projects: DEFAULT_PROJECTS,
+      certs: DEFAULT_CERTS,
+      skills: DEFAULT_SKILLS,
+      competitiveStats: DEFAULT_COMPETITIVE_STATS,
+    };
     writeLocal(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO);
     writeLocal(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS);
     writeLocal(STORAGE_KEYS.CERTS, DEFAULT_CERTS);
     writeLocal(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS);
     writeLocal(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS);
+    updateGlobalState(resetState);
     saveToSupabase(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO);
     saveToSupabase(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS);
     saveToSupabase(STORAGE_KEYS.CERTS, DEFAULT_CERTS);
@@ -564,11 +556,11 @@ export function usePortfolioStore() {
   const exportAllData = () => {
     return JSON.stringify(
       {
-        personalInfo,
-        projects,
-        certs,
-        skills,
-        competitiveStats,
+        personalInfo: state.personalInfo,
+        projects: state.projects,
+        certs: state.certs,
+        skills: state.skills,
+        competitiveStats: state.competitiveStats,
         exportedAt: new Date().toISOString(),
       },
       null,
@@ -579,31 +571,33 @@ export function usePortfolioStore() {
   const importAllData = (jsonStr: string) => {
     try {
       const data = JSON.parse(jsonStr);
+      const updated: Partial<PortfolioState> = {};
       if (data.personalInfo) {
-        setPersonalInfoState(data.personalInfo);
-        writeLocal(STORAGE_KEYS.PERSONAL, data.personalInfo);
-        saveToSupabase(STORAGE_KEYS.PERSONAL, data.personalInfo);
+        updated.personalInfo = { ...DEFAULT_PERSONAL_INFO, ...data.personalInfo };
+        writeLocal(STORAGE_KEYS.PERSONAL, updated.personalInfo);
+        saveToSupabase(STORAGE_KEYS.PERSONAL, updated.personalInfo);
       }
       if (data.projects && Array.isArray(data.projects)) {
-        setProjectsState(data.projects);
+        updated.projects = data.projects;
         writeLocal(STORAGE_KEYS.PROJECTS, data.projects);
         saveToSupabase(STORAGE_KEYS.PROJECTS, data.projects);
       }
       if (data.certs && Array.isArray(data.certs)) {
-        setCertsState(data.certs);
+        updated.certs = data.certs;
         writeLocal(STORAGE_KEYS.CERTS, data.certs);
         saveToSupabase(STORAGE_KEYS.CERTS, data.certs);
       }
       if (data.skills && typeof data.skills === "object") {
-        setSkillsState(data.skills);
-        writeLocal(STORAGE_KEYS.SKILLS, data.skills);
-        saveToSupabase(STORAGE_KEYS.SKILLS, data.skills);
+        updated.skills = { ...DEFAULT_SKILLS, ...data.skills };
+        writeLocal(STORAGE_KEYS.SKILLS, updated.skills);
+        saveToSupabase(STORAGE_KEYS.SKILLS, updated.skills);
       }
       if (data.competitiveStats) {
-        setCompetitiveStatsState(data.competitiveStats);
-        writeLocal(STORAGE_KEYS.COMPETITIVE, data.competitiveStats);
-        saveToSupabase(STORAGE_KEYS.COMPETITIVE, data.competitiveStats);
+        updated.competitiveStats = { ...DEFAULT_COMPETITIVE_STATS, ...data.competitiveStats };
+        writeLocal(STORAGE_KEYS.COMPETITIVE, updated.competitiveStats);
+        saveToSupabase(STORAGE_KEYS.COMPETITIVE, updated.competitiveStats);
       }
+      updateGlobalState(updated);
       return { success: true };
     } catch (err: unknown) {
       return { success: false, error: (err as Error).message };
@@ -611,11 +605,7 @@ export function usePortfolioStore() {
   };
 
   return {
-    personalInfo,
-    projects,
-    certs,
-    skills,
-    competitiveStats,
+    ...state,
     updatePersonalInfo,
     updateCompetitiveStats,
     addProject,

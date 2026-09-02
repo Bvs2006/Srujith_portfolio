@@ -428,7 +428,7 @@ export default function App() {
                   Architecture & Technologies
                 </p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
-                  {selectedProject.stack.map((s) => (
+                  {(selectedProject.stack || []).map((s) => (
                     <span
                       key={s}
                       style={{
@@ -1048,11 +1048,11 @@ export default function App() {
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))", gap: "2rem" }}>
-            {projects.map((p) => (
+            {(projects || []).map((p) => (
               <Card3D
                 key={p.id}
                 maxTilt={14}
-                accentColor={p.accent}
+                accentColor={p.accent || "#6366f1"}
                 isDark={isDark}
                 onClick={() => setSelectedProject(p)}
                 style={{ height: "100%" }}
@@ -1062,7 +1062,7 @@ export default function App() {
                     background: cardBg,
                     backdropFilter: "blur(20px)",
                     WebkitBackdropFilter: "blur(20px)",
-                    border: `1px solid ${p.accent}33`,
+                    border: `1px solid ${p.accent || "#6366f1"}33`,
                     borderRadius: "24px",
                     overflow: "hidden",
                     display: "flex",
@@ -1075,7 +1075,7 @@ export default function App() {
                   <div style={{ position: "relative", height: "190px", overflow: "hidden", background: "#111022" }}>
                     <img
                       src={p.img}
-                      alt={p.alt}
+                      alt={p.alt || p.name}
                       loading="lazy"
                       style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
                     />
@@ -1087,9 +1087,9 @@ export default function App() {
                         left: "0.85rem",
                         fontFamily: "'JetBrains Mono', monospace",
                         fontSize: "0.62rem",
-                        color: p.accent,
+                        color: p.accent || "#6366f1",
                         background: isDark ? "rgba(15, 14, 28, 0.9)" : "rgba(255, 255, 255, 0.9)",
-                        border: `1px solid ${p.accent}55`,
+                        border: `1px solid ${p.accent || "#6366f1"}55`,
                         borderRadius: "6px",
                         padding: "0.25rem 0.65rem",
                         letterSpacing: "0.08em",
@@ -1099,7 +1099,7 @@ export default function App() {
                     >
                       {p.tag}
                     </span>
-                    <span style={{ position: "absolute", top: "0.85rem", right: "0.85rem", color: p.accent, fontSize: "1.1rem" }}>
+                    <span style={{ position: "absolute", top: "0.85rem", right: "0.85rem", color: p.accent || "#6366f1", fontSize: "1.1rem" }}>
                       ↗
                     </span>
                   </div>
@@ -1115,7 +1115,7 @@ export default function App() {
                     </div>
 
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
-                      {p.stack.map((s) => (
+                      {(p.stack || []).map((s) => (
                         <span
                           key={s}
                           style={{
@@ -1158,7 +1158,7 @@ export default function App() {
           </h2>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "2rem" }}>
-            {Object.entries(skills).map(([cat, items]) => (
+            {Object.entries(skills || {}).map(([cat, items]) => (
               <Card3D key={cat} maxTilt={10} accentColor="#a855f7" isDark={isDark}>
                 <div
                   style={{
@@ -1176,7 +1176,7 @@ export default function App() {
                     {cat}
                   </p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                    {items.map((s) => (
+                    {(Array.isArray(items) ? items : []).map((s) => (
                       <span
                         key={s}
                         style={{
@@ -1224,16 +1224,16 @@ export default function App() {
               </p>
             </div>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#f59e0b", background: "rgba(245, 158, 11, 0.12)", border: "1px solid rgba(245, 158, 11, 0.3)", padding: "0.35rem 0.85rem", borderRadius: "999px", fontWeight: 600 }}>
-              {certs.length} VERIFIED CREDENTIALS
+              {(certs || []).length} VERIFIED CREDENTIALS
             </span>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))", gap: "1.5rem" }}>
-            {certs.map((cert) => (
+            {(certs || []).map((cert) => (
               <Card3D
                 key={cert.id || cert.name}
                 maxTilt={12}
-                accentColor={cert.color}
+                accentColor={cert.color || "#f59e0b"}
                 isDark={isDark}
                 onClick={() => setSelectedCert(cert)}
                 style={{ height: "100%" }}
