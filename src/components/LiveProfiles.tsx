@@ -379,8 +379,13 @@ function StaticPlatformCard({
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export default function LiveProfiles({ isDark = true }: { isDark?: boolean }) {
+  const store = usePortfolioStore();
+  const { competitiveStats } = store;
   const { data: lcData } = useLeetCodeStats("srujithcoder");
-  const totalSolvedAll = (lcData.totalSolved || 360) + 208 + 58 + 48; // LeetCode + CodeChef + GFG + HackerRank
+  const totalSolvedAll = (lcData.totalSolved || competitiveStats.leetcode.solved || 360) +
+    competitiveStats.codechef.solved +
+    competitiveStats.geeksforgeeks.solved +
+    competitiveStats.hackerrank.solved;
 
   const textMain = isDark ? "#ffffff" : "#0f172a";
   const textMuted = isDark ? THEME.mutedDark : THEME.mutedLight;
@@ -420,41 +425,41 @@ export default function LiveProfiles({ isDark = true }: { isDark?: boolean }) {
           <CodeforcesCard isDark={isDark} />
         </div>
 
-        {/* 3 Additional Platforms with direct verified numbers */}
+        {/* 3 Additional Platforms with direct numbers synced from store */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))", gap: "1.5rem", marginBottom: "2.5rem" }}>
           <StaticPlatformCard
             platform="CodeChef"
-            handle="bvs_coder"
+            handle={competitiveStats.codechef.handle}
             color="#f59e0b"
             isDark={isDark}
-            href="https://www.codechef.com/users/bvs_coder"
+            href={`https://www.codechef.com/users/${competitiveStats.codechef.handle}`}
             items={[
-              { label: "Solved Count", value: 208 },
-              { label: "Contest Rating", value: 1247 },
+              { label: "Solved Count", value: competitiveStats.codechef.solved },
+              { label: "Contest Rating", value: competitiveStats.codechef.rating },
               { label: "Division", value: "Div 4" },
             ]}
           />
           <StaticPlatformCard
             platform="HackerRank"
-            handle="srujith7780"
+            handle={competitiveStats.hackerrank.handle}
             color="#10b981"
             isDark={isDark}
-            href="https://www.hackerrank.com/profile/srujith7780"
+            href={`https://www.hackerrank.com/profile/${competitiveStats.hackerrank.handle}`}
             items={[
-              { label: "Verified Badges", value: "5 Badges" },
+              { label: "Challenges Solved", value: competitiveStats.hackerrank.solved },
               { label: "Problem Solving", value: "Gold ★" },
               { label: "Java & SQL", value: "3★ Each" },
             ]}
           />
           <StaticPlatformCard
             platform="GeeksForGeeks"
-            handle="bvs2006"
+            handle={competitiveStats.geeksforgeeks.handle}
             color="#38bdf8"
             isDark={isDark}
-            href="https://www.geeksforgeeks.org/user/bvs2006/"
+            href={`https://www.geeksforgeeks.org/user/${competitiveStats.geeksforgeeks.handle}/`}
             items={[
-              { label: "Solved", value: 58 },
-              { label: "Coding Score", value: 162 },
+              { label: "Solved", value: competitiveStats.geeksforgeeks.solved },
+              { label: "Coding Score", value: competitiveStats.geeksforgeeks.score },
             ]}
           />
         </div>
@@ -478,8 +483,8 @@ export default function LiveProfiles({ isDark = true }: { isDark?: boolean }) {
           {[
             { v: `${totalSolvedAll}+`, l: "Total Solved Across 6 Platforms", c: THEME.indigo },
             { v: `${lcData.activeDays}d`, l: "LeetCode Active Days", c: THEME.cyan },
-            { v: lcData.rating, l: "LeetCode Contest Rating", c: THEME.coral },
-            { v: "1247", l: "CodeChef Rating", c: THEME.amber },
+            { v: lcData.rating || competitiveStats.leetcode.rating, l: "LeetCode Contest Rating", c: THEME.coral },
+            { v: competitiveStats.codechef.rating, l: "CodeChef Rating", c: THEME.amber },
           ].map(({ v, l, c }) => (
             <div key={l} style={{ textAlign: "center" }}>
               <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "2.2rem", fontWeight: 800, color: c, margin: "0 0 0.2rem 0", lineHeight: 1 }}>{v}</p>

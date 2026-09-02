@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   usePortfolioStore,
   ProjectItem,
   CertItem,
+  PersonalInfo,
 } from "../hooks/usePortfolioStore";
 
 const COLOR_PRESETS = ["#6366f1", "#06b6d4", "#10b981", "#f43f5e", "#f59e0b", "#8b5cf6", "#0284c7", "#ef4444"];
@@ -46,6 +47,25 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
   const [hrSolved, setHrSolved] = useState(store.competitiveStats.hackerrank.solved);
   const [gfgSolved, setGfgSolved] = useState(store.competitiveStats.geeksforgeeks.solved);
   const [gfgScore, setGfgScore] = useState(store.competitiveStats.geeksforgeeks.score);
+
+  // Profile form state
+  const [profileForm, setProfileForm] = useState<PersonalInfo>(store.personalInfo);
+
+  useEffect(() => {
+    setProfileForm(store.personalInfo);
+  }, [store.personalInfo]);
+
+  useEffect(() => {
+    setLcSolved(store.competitiveStats.leetcode.solved);
+    setLcRating(store.competitiveStats.leetcode.rating);
+    setLcRank(store.competitiveStats.leetcode.ranking);
+    setCcSolved(store.competitiveStats.codechef.solved);
+    setCcRating(store.competitiveStats.codechef.rating);
+    setCfRating(store.competitiveStats.codeforces.rating);
+    setHrSolved(store.competitiveStats.hackerrank.solved);
+    setGfgSolved(store.competitiveStats.geeksforgeeks.solved);
+    setGfgScore(store.competitiveStats.geeksforgeeks.score);
+  }, [store.competitiveStats]);
 
   // Skill state
   const [newSkillCategory, setNewSkillCategory] = useState("");
@@ -213,6 +233,13 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
     });
 
     showNotice("Saved exact competitive programming stats & ratings! ✓");
+  };
+
+  // ── Profile Save Handler ──
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    store.updatePersonalInfo(profileForm);
+    showNotice("Profile & Resume settings saved permanently! ✓");
   };
 
   // ── Skill Handlers ──
@@ -433,7 +460,7 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                 Direct Problem Counts & Contest Ratings
               </h2>
               <p style={{ color: "#a1a1aa", fontSize: "0.85rem", lineHeight: 1.6, marginBottom: "1.75rem" }}>
-                Set your exact problem counts and ratings below. These exact figures reflect directly across your portfolio (e.g. 218 LeetCode, 208 CodeChef, 1411 rating) with zero generic estimates.
+                Set your exact problem counts and ratings below. These figures reflect permanently across your portfolio with zero generic estimates.
               </p>
 
               <form onSubmit={handleSaveCPStats} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -798,30 +825,29 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                     gap: "0.75rem",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
-                      <span style={{ fontSize: "1.6rem" }}>{c.icon}</span>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+                      <span style={{ fontSize: "1.5rem" }}>{c.icon}</span>
                       <div>
-                        <p style={{ margin: 0, fontWeight: 700, color: "#ffffff", fontSize: "0.95rem", fontFamily: "'Outfit', sans-serif" }}>
+                        <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.05rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>
                           {c.name}
                         </p>
-                        <p style={{ margin: "2px 0 0 0", fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: c.color }}>
+                        <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: c.color, margin: "2px 0 0 0" }}>
                           {c.issuer} · {c.year}
                         </p>
                       </div>
                     </div>
-
-                    <div style={{ display: "flex", gap: "0.35rem" }}>
+                    <div style={{ display: "flex", gap: "0.4rem" }}>
                       <button
                         onClick={() => handleEditCert(c)}
                         style={{
                           fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: "0.68rem",
+                          fontSize: "0.65rem",
                           background: "rgba(99, 102, 241, 0.15)",
                           color: "#a5b4fc",
                           border: "1px solid rgba(99, 102, 241, 0.3)",
                           borderRadius: "6px",
-                          padding: "0.35rem 0.7rem",
+                          padding: "0.35rem 0.65rem",
                           cursor: "pointer",
                         }}
                       >
@@ -829,19 +855,19 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                       </button>
                       <button
                         onClick={() => {
-                          if (confirm(`Delete "${c.name}"?`)) {
+                          if (confirm(`Delete certification "${c.name}"?`)) {
                             store.deleteCert(c.id);
                             showNotice(`Deleted "${c.name}"`);
                           }
                         }}
                         style={{
                           fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: "0.68rem",
+                          fontSize: "0.65rem",
                           background: "rgba(244, 63, 94, 0.12)",
                           color: "#f43f5e",
                           border: "1px solid rgba(244, 63, 94, 0.3)",
                           borderRadius: "6px",
-                          padding: "0.35rem 0.7rem",
+                          padding: "0.35rem 0.65rem",
                           cursor: "pointer",
                         }}
                       >
@@ -850,22 +876,14 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                     </div>
                   </div>
 
-                  {/* Drive link status */}
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255, 255, 255, 0.03)", padding: "0.5rem 0.75rem", borderRadius: "8px" }}>
-                    <span style={{ fontSize: "0.65rem", fontFamily: "'JetBrains Mono', monospace", color: c.credentialUrl ? "#10b981" : "#f59e0b" }}>
-                      {c.credentialUrl ? "✓ Drive Link Attached" : "⚠️ No Link Attached"}
-                    </span>
-                    {c.credentialUrl && (
-                      <a
-                        href={c.credentialUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ fontSize: "0.65rem", fontFamily: "'JetBrains Mono', monospace", color: "#38bdf8", textDecoration: "none" }}
-                      >
-                        Test Link ↗
+                  {c.credentialUrl && (
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(0, 0, 0, 0.3)", borderRadius: "8px", padding: "0.4rem 0.75rem" }}>
+                      <span style={{ fontSize: "0.75rem" }}>📄</span>
+                      <a href={c.credentialUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.72rem", color: "#38bdf8", textDecoration: "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {c.credentialUrl}
                       </a>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -883,19 +901,22 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                 padding: "1.75rem",
               }}
             >
-              <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.5rem", fontWeight: 700, color: "#ffffff", marginBottom: "1.25rem" }}>
+              <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.5rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.5rem" }}>
                 {editingProjId ? "Edit Project" : "Add New Project"}
               </h2>
+              <p style={{ color: "#a1a1aa", fontSize: "0.82rem", lineHeight: 1.5, marginBottom: "1.5rem" }}>
+                Add your projects with images, live demos, and GitHub repository links.
+              </p>
 
               <form onSubmit={handleSaveProject} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
                     Project Name *
                   </label>
                   <input
                     type="text"
                     required
-                    placeholder="e.g. AI Financial Forecaster"
+                    placeholder="e.g. Movie Sentiment Classifier"
                     value={projName}
                     onChange={(e) => setProjName(e.target.value)}
                     style={inputStyle}
@@ -903,12 +924,12 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
-                    Tag / Domain
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                    Category Tag
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. AI / ML · Python"
+                    placeholder="e.g. AI / ML · Python or Full Stack · React"
                     value={projTag}
                     onChange={(e) => setProjTag(e.target.value)}
                     style={inputStyle}
@@ -916,13 +937,12 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
-                    Short Summary (Hero / Card) *
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                    Short Summary (Card Preview)
                   </label>
                   <textarea
-                    required
                     rows={2}
-                    placeholder="Concise overview of what was built and impact..."
+                    placeholder="Brief 1-2 sentence overview"
                     value={projDesc}
                     onChange={(e) => setProjDesc(e.target.value)}
                     style={{ ...inputStyle, resize: "vertical" }}
@@ -930,12 +950,12 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
-                    Detailed Architecture (Modal)
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                    Detailed Architecture & Breakdown (Modal View)
                   </label>
                   <textarea
                     rows={3}
-                    placeholder="In-depth architecture, algorithm details, dataset, etc..."
+                    placeholder="Deep architectural explanation of your solution"
                     value={projDetails}
                     onChange={(e) => setProjDetails(e.target.value)}
                     style={{ ...inputStyle, resize: "vertical" }}
@@ -943,12 +963,12 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
                     Tech Stack (comma separated)
                   </label>
                   <input
                     type="text"
-                    placeholder="React, TypeScript, PyTorch, FastAPI"
+                    placeholder="React, TypeScript, Firebase, Tailwind CSS"
                     value={projStack}
                     onChange={(e) => setProjStack(e.target.value)}
                     style={inputStyle}
@@ -957,7 +977,7 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
                   <div>
-                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
                       GitHub URL
                     </label>
                     <input
@@ -969,12 +989,12 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                     />
                   </div>
                   <div>
-                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
                       Live Demo URL
                     </label>
                     <input
                       type="url"
-                      placeholder="https://my-app.vercel.app"
+                      placeholder="https://..."
                       value={projDemo}
                       onChange={(e) => setProjDemo(e.target.value)}
                       style={inputStyle}
@@ -983,8 +1003,8 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
-                    Cover Image URL
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                    Image URL (Unsplash or Direct Image)
                   </label>
                   <input
                     type="url"
@@ -993,30 +1013,6 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                     onChange={(e) => setProjImg(e.target.value)}
                     style={inputStyle}
                   />
-                </div>
-
-                <div>
-                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
-                    Accent Color
-                  </label>
-                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-                    {COLOR_PRESETS.map((col) => (
-                      <button
-                        type="button"
-                        key={col}
-                        onClick={() => setProjAccent(col)}
-                        style={{
-                          width: 26,
-                          height: 26,
-                          borderRadius: "50%",
-                          background: col,
-                          border: projAccent === col ? "2px solid #ffffff" : "2px solid transparent",
-                          cursor: "pointer",
-                          transform: projAccent === col ? "scale(1.2)" : "scale(1)",
-                        }}
-                      />
-                    ))}
-                  </div>
                 </div>
 
                 <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.75rem" }}>
@@ -1033,9 +1029,10 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                       borderRadius: "10px",
                       padding: "0.85rem",
                       cursor: "pointer",
+                      boxShadow: "0 4px 15px rgba(99, 102, 241, 0.4)",
                     }}
                   >
-                    {editingProjId ? "Save Project" : "+ Add Project"}
+                    {editingProjId ? "Save Project Changes" : "+ Add Project"}
                   </button>
                   {editingProjId && (
                     <button
@@ -1043,13 +1040,6 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                       onClick={() => {
                         setEditingProjId(null);
                         setProjName("");
-                        setProjTag("");
-                        setProjDesc("");
-                        setProjDetails("");
-                        setProjStack("");
-                        setProjImg("");
-                        setProjDemo("");
-                        setProjGithub("");
                       }}
                       style={{
                         fontFamily: "'JetBrains Mono', monospace",
@@ -1069,10 +1059,10 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
               </form>
             </div>
 
-            {/* List */}
+            {/* Project List */}
             <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <h3 style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.85rem", color: "#a1a1aa", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700 }}>
-                Current Projects ({store.projects.length})
+                Active Projects ({store.projects.length})
               </h3>
               {store.projects.map((p) => (
                 <div
@@ -1084,19 +1074,15 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                     padding: "1.25rem",
                     display: "flex",
                     gap: "1rem",
-                    alignItems: "flex-start",
+                    alignItems: "center",
                   }}
                 >
-                  <img
-                    src={p.img}
-                    alt={p.name}
-                    style={{ width: 70, height: 70, borderRadius: "10px", objectFit: "cover", flexShrink: 0 }}
-                  />
+                  <img src={p.img} alt={p.alt} style={{ width: 70, height: 70, borderRadius: "10px", objectFit: "cover" }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
-                      <span style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.1rem", fontWeight: 700, color: "#ffffff" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.05rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>
                         {p.name}
-                      </span>
+                      </p>
                       <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.6rem", color: p.accent, background: `${p.accent}1f`, border: `1px solid ${p.accent}44`, borderRadius: "4px", padding: "0.1rem 0.4rem" }}>
                         {p.tag}
                       </span>
@@ -1151,7 +1137,7 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
 
         {/* ── TAB: RESUME & PROFILE ── */}
         {activeTab === "resume" && (
-          <div style={{ marginTop: "2rem", maxWidth: "800px", margin: "2rem auto 0" }}>
+          <div style={{ marginTop: "2rem", maxWidth: "860px", margin: "2rem auto 0" }}>
             <div
               style={{
                 background: "rgba(18, 17, 30, 0.75)",
@@ -1160,19 +1146,22 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                 padding: "2rem",
               }}
             >
-              <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.5rem", fontWeight: 700, color: "#ffffff", marginBottom: "1.5rem" }}>
+              <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.5rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.5rem" }}>
                 Resume & Profile Information
               </h2>
+              <p style={{ color: "#a1a1aa", fontSize: "0.85rem", lineHeight: 1.5, marginBottom: "1.5rem" }}>
+                Update your portfolio details below and click <strong>"Save All Profile Changes"</strong>.
+              </p>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+              <form onSubmit={handleSaveProfile} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
                 <div style={{ background: "rgba(99, 102, 241, 0.08)", border: "1px solid rgba(99, 102, 241, 0.3)", borderRadius: "12px", padding: "1rem" }}>
                   <label style={{ display: "block", fontSize: "0.75rem", fontFamily: "'JetBrains Mono', monospace", color: "#c084fc", marginBottom: "0.35rem", fontWeight: 700 }}>
                     📄 Resume Google Drive / Document Link
                   </label>
                   <input
                     type="url"
-                    value={store.personalInfo.resumeUrl}
-                    onChange={(e) => store.updatePersonalInfo({ resumeUrl: e.target.value })}
+                    value={profileForm.resumeUrl}
+                    onChange={(e) => setProfileForm({ ...profileForm, resumeUrl: e.target.value })}
                     placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
                     style={{ ...inputStyle, background: "rgba(0, 0, 0, 0.4)", border: "1px solid rgba(99, 102, 241, 0.4)" }}
                   />
@@ -1185,8 +1174,8 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                     </label>
                     <input
                       type="text"
-                      value={store.personalInfo.name}
-                      onChange={(e) => store.updatePersonalInfo({ name: e.target.value })}
+                      value={profileForm.name}
+                      onChange={(e) => setProfileForm({ ...profileForm, name: e.target.value })}
                       style={inputStyle}
                     />
                   </div>
@@ -1196,8 +1185,8 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                     </label>
                     <input
                       type="text"
-                      value={store.personalInfo.title}
-                      onChange={(e) => store.updatePersonalInfo({ title: e.target.value })}
+                      value={profileForm.title}
+                      onChange={(e) => setProfileForm({ ...profileForm, title: e.target.value })}
                       style={inputStyle}
                     />
                   </div>
@@ -1209,8 +1198,8 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                   </label>
                   <textarea
                     rows={2}
-                    value={store.personalInfo.tagline}
-                    onChange={(e) => store.updatePersonalInfo({ tagline: e.target.value })}
+                    value={profileForm.tagline}
+                    onChange={(e) => setProfileForm({ ...profileForm, tagline: e.target.value })}
                     style={{ ...inputStyle, resize: "vertical" }}
                   />
                 </div>
@@ -1222,8 +1211,8 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                     </label>
                     <textarea
                       rows={3}
-                      value={store.personalInfo.bio1}
-                      onChange={(e) => store.updatePersonalInfo({ bio1: e.target.value })}
+                      value={profileForm.bio1}
+                      onChange={(e) => setProfileForm({ ...profileForm, bio1: e.target.value })}
                       style={{ ...inputStyle, resize: "vertical" }}
                     />
                   </div>
@@ -1233,57 +1222,125 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
                     </label>
                     <textarea
                       rows={3}
-                      value={store.personalInfo.bio2}
-                      onChange={(e) => store.updatePersonalInfo({ bio2: e.target.value })}
+                      value={profileForm.bio2}
+                      onChange={(e) => setProfileForm({ ...profileForm, bio2: e.target.value })}
                       style={{ ...inputStyle, resize: "vertical" }}
                     />
                   </div>
                 </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "0.75rem" }}>
+                {/* Academic & Stats details */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "0.75rem" }}>
                   <div>
                     <label style={{ display: "block", fontSize: "0.7rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
                       CGPA
                     </label>
                     <input
                       type="text"
-                      value={store.personalInfo.cgpa}
-                      onChange={(e) => store.updatePersonalInfo({ cgpa: e.target.value })}
+                      value={profileForm.cgpa}
+                      onChange={(e) => setProfileForm({ ...profileForm, cgpa: e.target.value })}
                       style={inputStyle}
                     />
                   </div>
                   <div>
                     <label style={{ display: "block", fontSize: "0.7rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
-                      University
+                      Class XII Score
                     </label>
                     <input
                       type="text"
-                      value={store.personalInfo.university}
-                      onChange={(e) => store.updatePersonalInfo({ university: e.target.value })}
+                      value={profileForm.class12Score || "95.8%"}
+                      onChange={(e) => setProfileForm({ ...profileForm, class12Score: e.target.value })}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.7rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem" }}>
+                      Problems Solved Display
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.problemsCount}
+                      onChange={(e) => setProfileForm({ ...profileForm, problemsCount: e.target.value })}
                       style={inputStyle}
                     />
                   </div>
                 </div>
 
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.35rem" }}>
+                      University Name
+                    </label>
+                    <input
+                      type="text"
+                      value={profileForm.university}
+                      onChange={(e) => setProfileForm({ ...profileForm, university: e.target.value })}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.35rem" }}>
+                      Primary Email
+                    </label>
+                    <input
+                      type="email"
+                      value={profileForm.email}
+                      onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
+                      style={inputStyle}
+                    />
+                  </div>
+                </div>
+
+                {/* Social & Platform URLs */}
+                <div style={{ background: "rgba(255, 255, 255, 0.03)", border: "1px solid rgba(255, 255, 255, 0.08)", borderRadius: "12px", padding: "1rem" }}>
+                  <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.95rem", fontWeight: 700, color: "#38bdf8", margin: "0 0 0.75rem 0" }}>
+                    Social & Platform Links
+                  </p>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                    <div>
+                      <label style={{ display: "block", fontSize: "0.68rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.2rem" }}>
+                        GitHub Profile URL
+                      </label>
+                      <input
+                        type="url"
+                        value={profileForm.github}
+                        onChange={(e) => setProfileForm({ ...profileForm, github: e.target.value })}
+                        style={inputStyle}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: "block", fontSize: "0.68rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.2rem" }}>
+                        LinkedIn Profile URL
+                      </label>
+                      <input
+                        type="url"
+                        value={profileForm.linkedin}
+                        onChange={(e) => setProfileForm({ ...profileForm, linkedin: e.target.value })}
+                        style={inputStyle}
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <button
-                  type="button"
-                  onClick={() => showNotice("Personal & Resume settings saved!")}
+                  type="submit"
                   style={{
                     marginTop: "1rem",
                     fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: "0.85rem",
+                    fontSize: "0.95rem",
                     fontWeight: 700,
-                    background: "#10b981",
+                    background: "linear-gradient(135deg, #10b981 0%, #06b6d4 100%)",
                     color: "#ffffff",
                     border: "none",
-                    borderRadius: "10px",
-                    padding: "0.85rem",
+                    borderRadius: "12px",
+                    padding: "1rem",
                     cursor: "pointer",
+                    boxShadow: "0 6px 20px rgba(16, 185, 129, 0.4)",
                   }}
                 >
-                  ✓ Save Profile Settings
+                  ✓ Save All Profile Changes Permanently
                 </button>
-              </div>
+              </form>
             </div>
           </div>
         )}

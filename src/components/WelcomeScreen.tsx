@@ -11,6 +11,8 @@ interface WelcomeScreenProps {
   isDark?: boolean;
 }
 
+const TOTAL_SECONDS = 3;
+
 export default function WelcomeScreen({
   onEnter,
   name,
@@ -24,7 +26,7 @@ export default function WelcomeScreen({
   const [isClosing, setIsClosing] = useState(false);
   const [timeStr, setTimeStr] = useState("");
   const [dateStr, setDateStr] = useState("");
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(TOTAL_SECONDS);
   const hasTriggeredRef = useRef(false);
 
   const handleEnter = () => {
@@ -84,8 +86,11 @@ export default function WelcomeScreen({
     return () => clearInterval(timer);
   }, []);
 
+  const progressPct = Math.max(0, Math.min(100, ((TOTAL_SECONDS - countdown) / TOTAL_SECONDS) * 100));
+
   return (
     <div
+      onClick={handleEnter}
       style={{
         position: "fixed",
         inset: 0,
@@ -104,6 +109,7 @@ export default function WelcomeScreen({
         filter: isClosing ? "blur(6px)" : "blur(0px)",
         transition: "opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), filter 0.45s ease",
         pointerEvents: isClosing ? "none" : "auto",
+        cursor: "pointer",
         overflow: "hidden",
       }}
     >
@@ -160,7 +166,7 @@ export default function WelcomeScreen({
             WebkitBackdropFilter: "blur(30px)",
             border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.35)" : "rgba(99, 102, 241, 0.25)"}`,
             borderRadius: "32px",
-            padding: "clamp(2rem, 5vw, 3.5rem) clamp(1.5rem, 5vw, 3rem)",
+            padding: "clamp(2.2rem, 5vw, 3.75rem) clamp(1.5rem, 5vw, 3rem)",
             boxShadow: isDark
               ? "0 30px 80px rgba(0, 0, 0, 0.7), 0 0 45px rgba(99, 102, 241, 0.25)"
               : "0 30px 80px rgba(99, 102, 241, 0.12), 0 0 35px rgba(99, 102, 241, 0.1)",
@@ -263,7 +269,7 @@ export default function WelcomeScreen({
               gap: "0.75rem",
               width: "100%",
               maxWidth: 480,
-              marginBottom: "2.25rem",
+              marginBottom: "2.5rem",
             }}
           >
             {[
@@ -293,48 +299,63 @@ export default function WelcomeScreen({
             ))}
           </div>
 
-          {/* Enter Button with Auto Redirect Indicator */}
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.85rem", transform: "translateZ(50px)" }}>
-            <button
-              onClick={handleEnter}
-              style={{
-                fontFamily: "'Outfit', sans-serif",
-                fontSize: "0.95rem",
-                letterSpacing: "0.05em",
-                textTransform: "uppercase",
-                fontWeight: 800,
-                background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
-                color: "#ffffff",
-                border: "none",
-                borderRadius: "16px",
-                padding: "1.1rem 3.25rem",
-                cursor: "pointer",
-                boxShadow: "0 12px 35px rgba(99, 102, 241, 0.45), 0 0 25px rgba(6, 182, 212, 0.3)",
-                transition: "all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.85rem",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "scale(1.04)";
-                e.currentTarget.style.boxShadow = "0 18px 50px rgba(99, 102, 241, 0.65), 0 0 35px rgba(6, 182, 212, 0.5)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow = "0 12px 35px rgba(99, 102, 241, 0.45), 0 0 25px rgba(6, 182, 212, 0.3)";
-              }}
-            >
-              Enter Experience
-              <span style={{ fontSize: "1.2rem" }}>→</span>
-            </button>
-
-            {/* Auto-redirect countdown pulse */}
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#06b6d4", boxShadow: "0 0 8px #06b6d4" }} />
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: isDark ? "#94a3b8" : "#64748b", letterSpacing: "0.05em" }}>
-                Auto-entering in {countdown}s…
+          {/* Modern Countdown Progress HUD (No Button) */}
+          <div
+            style={{
+              transform: "translateZ(45px)",
+              width: "100%",
+              maxWidth: 360,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "0.75rem",
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: isDark ? "#a5b4fc" : "#4338ca", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700 }}>
+                Directing to Portfolio
+              </span>
+              <span
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: "1.1rem",
+                  fontWeight: 900,
+                  color: "#06b6d4",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.2rem",
+                }}
+              >
+                {countdown}s
               </span>
             </div>
+
+            {/* Glowing countdown bar */}
+            <div
+              style={{
+                width: "100%",
+                height: 8,
+                background: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
+                borderRadius: "999px",
+                overflow: "hidden",
+                border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.25)" : "rgba(99, 102, 241, 0.15)"}`,
+              }}
+            >
+              <div
+                style={{
+                  height: "100%",
+                  width: `${progressPct}%`,
+                  background: "linear-gradient(90deg, #6366f1 0%, #06b6d4 100%)",
+                  borderRadius: "999px",
+                  boxShadow: "0 0 15px #06b6d4",
+                  transition: "width 1s linear",
+                }}
+              />
+            </div>
+
+            <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.62rem", color: isDark ? "#64748b" : "#94a3b8", margin: "0.25rem 0 0 0", letterSpacing: "0.04em" }}>
+              (Tap anywhere to enter immediately)
+            </p>
           </div>
         </div>
       </Card3D>

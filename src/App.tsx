@@ -6,6 +6,7 @@ import DateTimeWidget from "./components/DateTimeWidget";
 import ThemeToggle from "./components/ThemeToggle";
 import LiveProfiles from "./components/LiveProfiles";
 import AdminDashboard from "./components/AdminDashboard";
+import AdminAuthModal from "./components/AdminAuthModal";
 import { usePortfolioStore, ProjectItem, CertItem } from "./hooks/usePortfolioStore";
 import { useTheme } from "./hooks/useTheme";
 
@@ -36,6 +37,11 @@ export default function App() {
     const hash = window.location.hash.toLowerCase();
     const search = window.location.search.toLowerCase();
     return path.includes("/admin") || hash.includes("admin") || search.includes("admin=true");
+  });
+
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return sessionStorage.getItem("portfolio_admin_auth") === "true";
   });
 
   useEffect(() => {
@@ -97,6 +103,14 @@ export default function App() {
   };
 
   if (isAdmin) {
+    if (!isAdminAuthenticated) {
+      return (
+        <AdminAuthModal
+          onSuccess={() => setIsAdminAuthenticated(true)}
+          onCancel={handleExitAdmin}
+        />
+      );
+    }
     return <AdminDashboard onExit={handleExitAdmin} />;
   }
 
