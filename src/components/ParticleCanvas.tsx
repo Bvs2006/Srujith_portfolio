@@ -40,8 +40,8 @@ export default function ParticleCanvas({ isDark = true }: { isDark?: boolean }) 
       alpha: number;
     }> = [];
 
-    const darkColors = ["#818cf8", "#06b6d4", "#c084fc", "#38bdf8", "#10b981", "#fb7185"];
-    const lightColors = ["#6366f1", "#0284c7", "#9333ea", "#2563eb", "#059669", "#e11d48"];
+    const darkColors = ["#34d399", "#10b981", "#6ee7b7", "#a7f3d0", "#4ade80", "#22c55e", "#059669", "#86efac"];
+    const lightColors = ["#059669", "#10b981", "#0284c7", "#16a34a", "#0d9488", "#047857"];
     const colors = isDark ? darkColors : lightColors;
 
     for (let i = 0; i < particleCount; i++) {
@@ -54,7 +54,7 @@ export default function ParticleCanvas({ isDark = true }: { isDark?: boolean }) 
         vy: (Math.random() - 0.5) * (0.35 * z),
         size: (Math.random() * 1.8 + 0.8) * (z * 0.75),
         color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: (Math.random() * 0.4 + 0.2) * (z / 3),
+        alpha: (Math.random() * 0.45 + 0.25) * (z / 3),
       });
     }
 
@@ -71,7 +71,7 @@ export default function ParticleCanvas({ isDark = true }: { isDark?: boolean }) 
       // ── Realistic 3D Horizon Grid (Subtle) ──
       const gridY = height * 0.65;
       ctx.save();
-      ctx.strokeStyle = isDark ? "rgba(99, 102, 241, 0.04)" : "rgba(99, 102, 241, 0.05)";
+      ctx.strokeStyle = isDark ? "rgba(52, 211, 153, 0.04)" : "rgba(16, 185, 129, 0.05)";
       ctx.lineWidth = 0.75;
 
       // Perspective horizon lines
@@ -95,10 +95,10 @@ export default function ParticleCanvas({ isDark = true }: { isDark?: boolean }) 
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            const lineAlpha = (1 - dist / 115) * 0.18 * ((particles[i].z + particles[j].z) / 4);
+            const lineAlpha = (1 - dist / 115) * 0.22 * ((particles[i].z + particles[j].z) / 4);
             ctx.strokeStyle = isDark
-              ? `rgba(129, 140, 248, ${lineAlpha})`
-              : `rgba(99, 102, 241, ${lineAlpha * 1.2})`;
+              ? `rgba(52, 211, 153, ${lineAlpha})`
+              : `rgba(16, 185, 129, ${lineAlpha * 1.2})`;
             ctx.lineWidth = 0.65;
             ctx.stroke();
           }

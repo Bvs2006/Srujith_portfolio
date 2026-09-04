@@ -122,13 +122,13 @@ export default function App() {
   const { personalInfo, projects, certs, skills } = store;
 
   // Theme dynamic colors
-  const bgMain = isDark ? "#05050a" : "#f8f9fc";
+  const bgMain = isDark ? "#040806" : "#f8f9fc";
   const textMain = isDark ? "#ffffff" : "#0f172a";
-  const textMuted = isDark ? "#a1a1aa" : "#64748b";
-  const cardBg = isDark ? "rgba(15, 14, 28, 0.78)" : "rgba(255, 255, 255, 0.88)";
-  const cardBorder = isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(99, 102, 241, 0.15)";
+  const textMuted = isDark ? "#94a3b8" : "#64748b";
+  const cardBg = isDark ? "rgba(8, 20, 16, 0.8)" : "rgba(255, 255, 255, 0.88)";
+  const cardBorder = isDark ? "rgba(52, 211, 153, 0.16)" : "rgba(16, 185, 129, 0.15)";
   const navBg = isDark
-    ? scrolled ? "rgba(5, 5, 10, 0.88)" : "transparent"
+    ? scrolled ? "rgba(4, 8, 6, 0.9)" : "transparent"
     : scrolled ? "rgba(255, 255, 255, 0.92)" : "transparent";
 
   return (
@@ -157,8 +157,8 @@ export default function App() {
           height: 600,
           borderRadius: "50%",
           background: isDark
-            ? "radial-gradient(circle, rgba(99, 102, 241, 0.16) 0%, transparent 70%)"
-            : "radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%)",
+            ? "radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%)",
           filter: "blur(80px)",
           pointerEvents: "none",
           zIndex: 1,
@@ -175,8 +175,8 @@ export default function App() {
           height: 550,
           borderRadius: "50%",
           background: isDark
-            ? "radial-gradient(circle, rgba(6, 182, 212, 0.14) 0%, transparent 70%)"
-            : "radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%)",
+            ? "radial-gradient(circle, rgba(52, 211, 153, 0.14) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(52, 211, 153, 0.08) 0%, transparent 70%)",
           filter: "blur(90px)",
           pointerEvents: "none",
           zIndex: 1,
@@ -536,7 +536,7 @@ export default function App() {
           <span className={isDark ? "gradient-logo-dark" : "gradient-logo-light"}>
             VSB
           </span>
-          <span style={{ color: "#06b6d4" }}>.dev</span>
+          <span style={{ color: "#34d399" }}>.dev</span>
         </button>
 
         {/* Desktop Links */}
@@ -550,7 +550,7 @@ export default function App() {
                 fontSize: "0.72rem",
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
-                color: activeSection === id ? (isDark ? "#a5b4fc" : "#4338ca") : textMuted,
+                color: activeSection === id ? (isDark ? "#34d399" : "#047857") : textMuted,
                 background: "none",
                 border: "none",
                 cursor: "pointer",
@@ -569,9 +569,9 @@ export default function App() {
                     left: 0,
                     right: 0,
                     height: "2px",
-                    background: "linear-gradient(90deg, #6366f1, #06b6d4)",
+                    background: "linear-gradient(90deg, #10b981, #34d399)",
                     borderRadius: "999px",
-                    boxShadow: "0 0 10px #6366f1",
+                    boxShadow: "0 0 10px #34d399",
                   }}
                 />
               )}
@@ -593,9 +593,9 @@ export default function App() {
                 fontFamily: "'Outfit', sans-serif",
                 fontSize: "0.8rem",
                 fontWeight: 700,
-                color: isDark ? "#ffffff" : "#4338ca",
-                background: isDark ? "rgba(99, 102, 241, 0.2)" : "rgba(99, 102, 241, 0.1)",
-                border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.45)" : "rgba(99, 102, 241, 0.3)"}`,
+                color: isDark ? "#ffffff" : "#047857",
+                background: isDark ? "rgba(16, 185, 129, 0.2)" : "rgba(16, 185, 129, 0.1)",
+                border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.45)" : "rgba(16, 185, 129, 0.3)"}`,
                 borderRadius: "10px",
                 padding: "0.5rem 1rem",
                 textDecoration: "none",
@@ -695,15 +695,15 @@ export default function App() {
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "0.5rem",
-                background: isDark ? "rgba(99, 102, 241, 0.12)" : "rgba(99, 102, 241, 0.08)",
-                border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.35)" : "rgba(99, 102, 241, 0.25)"}`,
+                background: isDark ? "rgba(16, 185, 129, 0.14)" : "rgba(16, 185, 129, 0.08)",
+                border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.4)" : "rgba(16, 185, 129, 0.25)"}`,
                 borderRadius: "999px",
                 padding: "0.4rem 1rem",
                 marginBottom: "1.5rem",
               }}
             >
-              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#06b6d4", boxShadow: "0 0 10px #06b6d4" }} />
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: isDark ? "#e2e8f0" : "#4338ca", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600 }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#34d399", boxShadow: "0 0 10px #34d399" }} />
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: isDark ? "#6ee7b7" : "#047857", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600 }}>
                 {personalInfo.title}
               </span>
             </div>
@@ -740,22 +740,22 @@ export default function App() {
                   fontWeight: 800,
                   textTransform: "uppercase",
                   letterSpacing: "0.05em",
-                  background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
                   color: "#ffffff",
                   border: "none",
                   borderRadius: "14px",
                   padding: "1rem 2.4rem",
                   cursor: "pointer",
-                  boxShadow: "0 10px 30px rgba(99, 102, 241, 0.45)",
+                  boxShadow: "0 10px 30px rgba(16, 185, 129, 0.45)",
                   transition: "all 0.25s",
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-3px) scale(1.02)";
-                  e.currentTarget.style.boxShadow = "0 15px 40px rgba(99, 102, 241, 0.65)";
+                  e.currentTarget.style.boxShadow = "0 15px 40px rgba(16, 185, 129, 0.65)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0) scale(1)";
-                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(99, 102, 241, 0.45)";
+                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(16, 185, 129, 0.45)";
                 }}
               >
                 View Works ({projects.length}) →
@@ -774,19 +774,19 @@ export default function App() {
                     letterSpacing: "0.05em",
                     background: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
                     color: textMain,
-                    border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(99, 102, 241, 0.3)"}`,
+                    border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(16, 185, 129, 0.3)"}`,
                     borderRadius: "14px",
                     padding: "1rem 2rem",
                     textDecoration: "none",
                     transition: "all 0.25s",
-                    boxShadow: isDark ? "none" : "0 4px 15px rgba(99, 102, 241, 0.1)",
+                    boxShadow: isDark ? "none" : "0 4px 15px rgba(16, 185, 129, 0.1)",
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = "#a5b4fc";
+                    e.currentTarget.style.borderColor = "#34d399";
                     e.currentTarget.style.transform = "translateY(-3px)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = isDark ? "rgba(255, 255, 255, 0.2)" : "rgba(99, 102, 241, 0.3)";
+                    e.currentTarget.style.borderColor = isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(16, 185, 129, 0.3)";
                     e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
@@ -816,7 +816,7 @@ export default function App() {
                     transition: "color 0.2s",
                     fontWeight: 500,
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "#38bdf8")}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#34d399")}
                   onMouseLeave={(e) => (e.currentTarget.style.color = textMuted)}
                 >
                   {label} ↗
@@ -827,18 +827,18 @@ export default function App() {
 
           {/* 3D Levitating Profile Console */}
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <Card3D maxTilt={16} accentColor="#6366f1" isDark={isDark} style={{ maxWidth: 460, width: "100%" }}>
+            <Card3D maxTilt={16} accentColor={isDark ? "#10b981" : "#059669"} isDark={isDark} style={{ maxWidth: 460, width: "100%" }}>
               <div
                 style={{
                   background: cardBg,
                   backdropFilter: "blur(24px)",
                   WebkitBackdropFilter: "blur(24px)",
-                  border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.35)" : "rgba(99, 102, 241, 0.25)"}`,
+                  border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.35)" : "rgba(16, 185, 129, 0.25)"}`,
                   borderRadius: "28px",
                   padding: "2rem",
                   boxShadow: isDark
-                    ? "0 25px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(99, 102, 241, 0.25)"
-                    : "0 25px 60px rgba(99, 102, 241, 0.12)",
+                    ? "0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(16, 185, 129, 0.25)"
+                    : "0 25px 60px rgba(16, 185, 129, 0.12)",
                   transformStyle: "preserve-3d",
                 }}
               >
@@ -848,7 +848,7 @@ export default function App() {
                     <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#f59e0b" }} />
                     <span style={{ width: 10, height: 10, borderRadius: "50%", background: "#10b981" }} />
                   </div>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: textMuted, letterSpacing: "0.1em" }}>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: isDark ? "#6ee7b7" : textMuted, letterSpacing: "0.1em" }}>
                     srujith_core.sh
                   </span>
                 </div>
@@ -859,9 +859,9 @@ export default function App() {
                       width: 68,
                       height: 68,
                       borderRadius: "20px",
-                      background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
+                      background: "linear-gradient(135deg, #10b981 0%, #34d399 100%)",
                       padding: "2px",
-                      boxShadow: "0 0 25px rgba(99, 102, 241, 0.5)",
+                      boxShadow: "0 0 25px rgba(16, 185, 129, 0.5)",
                     }}
                   >
                     <img
@@ -874,7 +874,7 @@ export default function App() {
                     <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.3rem", fontWeight: 800, color: textMain, margin: 0 }}>
                       {personalInfo.name}
                     </h3>
-                    <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: "#38bdf8", margin: "2px 0 0 0" }}>
+                    <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: isDark ? "#34d399" : "#059669", margin: "2px 0 0 0" }}>
                       @{(personalInfo.university || "Aditya University").split(",")[0]}
                     </p>
                   </div>
@@ -883,7 +883,7 @@ export default function App() {
                 {/* Code Snippet */}
                 <div
                   style={{
-                    background: isDark ? "rgba(5, 5, 10, 0.75)" : "rgba(241, 245, 249, 0.8)",
+                    background: isDark ? "rgba(4, 12, 9, 0.85)" : "rgba(241, 245, 249, 0.8)",
                     borderRadius: "16px",
                     padding: "1.1rem",
                     border: `1px solid ${cardBorder}`,
@@ -894,11 +894,11 @@ export default function App() {
                     marginBottom: "1.5rem",
                   }}
                 >
-                  <p style={{ margin: 0, color: isDark ? "#a5b4fc" : "#4338ca" }}>
+                  <p style={{ margin: 0, color: isDark ? "#6ee7b7" : "#047857" }}>
                     <span style={{ color: "#f43f5e" }}>const</span> engineer = {"{"}
                   </p>
                   <p style={{ margin: 0, paddingLeft: "1rem", color: textMain }}>
-                    focus: <span style={{ color: "#0284c7" }}>"AI / ML & Systems"</span>,
+                    focus: <span style={{ color: "#34d399" }}>"AI / ML & Systems"</span>,
                   </p>
                   <p style={{ margin: 0, paddingLeft: "1rem", color: textMain }}>
                     cgpa: <span style={{ color: "#f59e0b" }}>{personalInfo.cgpa}</span>,
@@ -907,19 +907,19 @@ export default function App() {
                     solvedProblems: <span style={{ color: "#10b981" }}>"{personalInfo.problemsCount}"</span>,
                   </p>
                   <p style={{ margin: 0, paddingLeft: "1rem", color: textMain }}>
-                    status: <span style={{ color: "#06b6d4" }}>"Open for Roles"</span>,
+                    status: <span style={{ color: "#34d399" }}>"Open for Roles"</span>,
                   </p>
-                  <p style={{ margin: 0, color: isDark ? "#a5b4fc" : "#4338ca" }}>{"};"}</p>
+                  <p style={{ margin: 0, color: isDark ? "#6ee7b7" : "#047857" }}>{"};"}</p>
                 </div>
 
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem", transform: "translateZ(30px)" }}>
-                  <div style={{ background: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(99, 102, 241, 0.05)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${cardBorder}` }}>
+                  <div style={{ background: isDark ? "rgba(52, 211, 153, 0.05)" : "rgba(16, 185, 129, 0.05)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${cardBorder}` }}>
                     <p style={{ fontSize: "0.62rem", fontFamily: "'JetBrains Mono', monospace", color: textMuted, margin: 0, textTransform: "uppercase" }}>Core Stack</p>
-                    <p style={{ fontSize: "0.9rem", fontWeight: 800, color: isDark ? "#a5b4fc" : "#4338ca", margin: "4px 0 0 0", fontFamily: "'Outfit', sans-serif" }}>C++ · Py · React</p>
+                    <p style={{ fontSize: "0.9rem", fontWeight: 800, color: isDark ? "#34d399" : "#047857", margin: "4px 0 0 0", fontFamily: "'Outfit', sans-serif" }}>C++ · Py · React</p>
                   </div>
-                  <div style={{ background: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(99, 102, 241, 0.05)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${cardBorder}` }}>
+                  <div style={{ background: isDark ? "rgba(52, 211, 153, 0.05)" : "rgba(16, 185, 129, 0.05)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${cardBorder}` }}>
                     <p style={{ fontSize: "0.62rem", fontFamily: "'JetBrains Mono', monospace", color: textMuted, margin: 0, textTransform: "uppercase" }}>Certifications</p>
-                    <p style={{ fontSize: "0.9rem", fontWeight: 800, color: "#38bdf8", margin: "4px 0 0 0", fontFamily: "'Outfit', sans-serif" }}>{(certs || []).length} Credentials</p>
+                    <p style={{ fontSize: "0.9rem", fontWeight: 800, color: isDark ? "#6ee7b7" : "#059669", margin: "4px 0 0 0", fontFamily: "'Outfit', sans-serif" }}>{(certs || []).length} Credentials</p>
                   </div>
                 </div>
               </div>

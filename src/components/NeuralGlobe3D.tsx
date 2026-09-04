@@ -29,8 +29,8 @@ export default function NeuralGlobe3D({ isDark = true, size = 380 }: NeuralGlobe
     const points: Array<{ x: number; y: number; z: number; ox: number; oy: number; oz: number; size: number; color: string }> = [];
 
     const palette = isDark
-      ? ["#6366f1", "#06b6d4", "#a855f7", "#38bdf8", "#10b981", "#ffffff"]
-      : ["#4f46e5", "#0284c7", "#9333ea", "#2563eb", "#059669", "#1e1b4b"];
+      ? ["#34d399", "#10b981", "#6ee7b7", "#a7f3d0", "#4ade80", "#059669", "#ffffff"]
+      : ["#047857", "#059669", "#10b981", "#0284c7", "#16a34a", "#064e3b"];
 
     // Fibonacci sphere distribution for uniform 3D distribution
     const phi = Math.PI * (3 - Math.sqrt(5));
@@ -57,9 +57,9 @@ export default function NeuralGlobe3D({ isDark = true, size = 380 }: NeuralGlobe
     // Outer orbital rings
     const ringCount = 3;
     const ringRays: Array<{ angleX: number; angleY: number; angleZ: number; speed: number; color: string }> = [
-      { angleX: 0.4, angleY: 0.6, angleZ: 0.2, speed: 0.012, color: "#6366f1" },
-      { angleX: -0.5, angleY: 0.8, angleZ: -0.3, speed: -0.015, color: "#06b6d4" },
-      { angleX: 0.8, angleY: -0.4, angleZ: 0.6, speed: 0.009, color: "#a855f7" },
+      { angleX: 0.4, angleY: 0.6, angleZ: 0.2, speed: 0.012, color: isDark ? "#34d399" : "#059669" },
+      { angleX: -0.5, angleY: 0.8, angleZ: -0.3, speed: -0.015, color: isDark ? "#10b981" : "#10b981" },
+      { angleX: 0.8, angleY: -0.4, angleZ: 0.6, speed: 0.009, color: isDark ? "#6ee7b7" : "#0284c7" },
     ];
 
     let rotX = 0;
@@ -143,10 +143,10 @@ export default function NeuralGlobe3D({ isDark = true, size = 380 }: NeuralGlobe
             ctx.beginPath();
             ctx.moveTo(projected[i].px, projected[i].py);
             ctx.lineTo(projected[j].px, projected[j].py);
-            const alpha = (1 - dist / 42) * 0.3 * Math.min(projected[i].alpha, projected[j].alpha);
+            const alpha = (1 - dist / 42) * 0.35 * Math.min(projected[i].alpha, projected[j].alpha);
             ctx.strokeStyle = isDark
-              ? `rgba(99, 102, 241, ${alpha})`
-              : `rgba(79, 70, 229, ${alpha * 1.2})`;
+              ? `rgba(52, 211, 153, ${alpha})`
+              : `rgba(16, 185, 129, ${alpha * 1.2})`;
             ctx.lineWidth = 0.75;
             ctx.stroke();
           }
@@ -198,8 +198,8 @@ export default function NeuralGlobe3D({ isDark = true, size = 380 }: NeuralGlobe
 
       // Core 3D Light Glow in the center
       const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius * 0.85);
-      grad.addColorStop(0, isDark ? "rgba(99, 102, 241, 0.22)" : "rgba(99, 102, 241, 0.12)");
-      grad.addColorStop(0.6, isDark ? "rgba(6, 182, 212, 0.08)" : "rgba(6, 182, 212, 0.05)");
+      grad.addColorStop(0, isDark ? "rgba(16, 185, 129, 0.28)" : "rgba(16, 185, 129, 0.12)");
+      grad.addColorStop(0.6, isDark ? "rgba(52, 211, 153, 0.12)" : "rgba(5, 150, 105, 0.05)");
       grad.addColorStop(1, "transparent");
       ctx.fillStyle = grad;
       ctx.beginPath();

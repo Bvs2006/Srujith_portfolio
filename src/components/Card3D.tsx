@@ -17,7 +17,7 @@ export default function Card3D({
   style = {},
   maxTilt = 14,
   glare = true,
-  accentColor = "#6366f1",
+  accentColor = "#10b981",
   isDark = true,
   onClick,
 }: Card3DProps) {

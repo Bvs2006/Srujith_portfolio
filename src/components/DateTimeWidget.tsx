@@ -63,15 +63,15 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
             bottom: "calc(100% + 14px)",
             right: 0,
             width: "320px",
-            background: isDark ? "rgba(15, 14, 28, 0.92)" : "rgba(255, 255, 255, 0.95)",
+            background: isDark ? "rgba(8, 20, 16, 0.94)" : "rgba(255, 255, 255, 0.95)",
             backdropFilter: "blur(24px)",
             WebkitBackdropFilter: "blur(24px)",
-            border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.35)" : "rgba(99, 102, 241, 0.2)"}`,
+            border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.35)" : "rgba(16, 185, 129, 0.2)"}`,
             borderRadius: "24px",
             padding: "1.4rem",
             boxShadow: isDark
-              ? "0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(99, 102, 241, 0.2)"
-              : "0 25px 60px rgba(99, 102, 241, 0.15), 0 0 25px rgba(99, 102, 241, 0.08)",
+              ? "0 25px 60px rgba(0, 0, 0, 0.75), 0 0 35px rgba(16, 185, 129, 0.2)"
+              : "0 25px 60px rgba(16, 185, 129, 0.15), 0 0 25px rgba(16, 185, 129, 0.08)",
             animation: "widgetPop 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
             display: "flex",
             flexDirection: "column",
@@ -79,8 +79,8 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)"}`, paddingBottom: "0.65rem" }}>
-            <span style={{ fontSize: "0.65rem", color: isDark ? "#a5b4fc" : "#4f46e5", letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: 700, display: "flex", alignItems: "center", gap: "6px" }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#06b6d4", boxShadow: "0 0 8px #06b6d4" }} />
+            <span style={{ fontSize: "0.65rem", color: isDark ? "#6ee7b7" : "#047857", letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: 700, display: "flex", alignItems: "center", gap: "6px" }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34d399", boxShadow: "0 0 8px #34d399" }} />
               Live System Status
             </span>
             <button
@@ -93,13 +93,13 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
           </div>
 
           {/* Srujith's Time in India */}
-          <div style={{ background: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(99, 102, 241, 0.04)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(99, 102, 241, 0.1)"}` }}>
+          <div style={{ background: isDark ? "rgba(52, 211, 153, 0.05)" : "rgba(16, 185, 129, 0.04)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.15)" : "rgba(16, 185, 129, 0.1)"}` }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.3rem" }}>
               <span style={{ fontSize: "0.62rem", color: isDark ? "#a1a1aa" : "#64748b", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 600 }}>
                 Base: India (IST)
               </span>
-              <span style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "0.6rem", color: "#10b981", fontWeight: 600 }}>
-                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#10b981", boxShadow: "0 0 8px #10b981" }} />
+              <span style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "0.6rem", color: "#34d399", fontWeight: 600 }}>
+                <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34d399", boxShadow: "0 0 8px #34d399" }} />
                 Online & Available
               </span>
             </div>
@@ -118,8 +118,8 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
           </div>
 
           {/* Availability Status */}
-          <div style={{ background: isDark ? "rgba(6, 182, 212, 0.08)" : "rgba(6, 182, 212, 0.08)", border: "1px solid rgba(6, 182, 212, 0.3)", borderRadius: "12px", padding: "0.75rem 0.9rem" }}>
-            <p style={{ fontSize: "0.68rem", color: isDark ? "#38bdf8" : "#0284c7", margin: 0, fontWeight: 700, display: "flex", alignItems: "center", gap: "6px" }}>
+          <div style={{ background: isDark ? "rgba(16, 185, 129, 0.08)" : "rgba(16, 185, 129, 0.08)", border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(16, 185, 129, 0.3)"}`, borderRadius: "12px", padding: "0.75rem 0.9rem" }}>
+            <p style={{ fontSize: "0.68rem", color: isDark ? "#34d399" : "#047857", margin: 0, fontWeight: 700, display: "flex", alignItems: "center", gap: "6px" }}>
               <span>🚀</span> Open for Internships & Projects
             </p>
             <p style={{ fontSize: "0.62rem", color: isDark ? "#a1a1aa" : "#64748b", margin: "4px 0 0 0", fontFamily: "'Inter', sans-serif" }}>
@@ -136,7 +136,7 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: "0.68rem",
                 letterSpacing: "0.05em",
-                background: copied ? "#10b981" : "#6366f1",
+                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
                 color: "#ffffff",
                 border: "none",
                 borderRadius: "10px",
@@ -144,7 +144,7 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
                 cursor: "pointer",
                 transition: "all 0.2s",
                 fontWeight: 600,
-                boxShadow: copied ? "0 0 15px rgba(16, 185, 129, 0.4)" : "0 4px 15px rgba(99, 102, 241, 0.3)",
+                boxShadow: copied ? "0 0 15px rgba(52, 211, 153, 0.6)" : "0 4px 15px rgba(16, 185, 129, 0.35)",
               }}
             >
               {copied ? "Copied Email! ✓" : "Copy Email"}
@@ -157,7 +157,7 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
                 letterSpacing: "0.05em",
                 background: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.04)",
                 color: isDark ? "#ffffff" : "#0f172a",
-                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.15)" : "rgba(0, 0, 0, 0.12)"}`,
+                border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(0, 0, 0, 0.12)"}`,
                 borderRadius: "10px",
                 padding: "0.7rem 0.85rem",
                 textDecoration: "none",
@@ -181,18 +181,18 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
           display: "flex",
           alignItems: "center",
           gap: "0.75rem",
-          background: isDark ? "rgba(15, 14, 28, 0.88)" : "rgba(255, 255, 255, 0.92)",
+          background: isDark ? "rgba(8, 20, 16, 0.9)" : "rgba(255, 255, 255, 0.92)",
           backdropFilter: "blur(18px)",
           WebkitBackdropFilter: "blur(18px)",
           color: isDark ? "#f1f0f7" : "#0f172a",
-          border: `1px solid ${isOpen ? "#6366f1" : isDark ? "rgba(99, 102, 241, 0.35)" : "rgba(99, 102, 241, 0.25)"}`,
+          border: `1px solid ${isOpen ? "#34d399" : isDark ? "rgba(52, 211, 153, 0.4)" : "rgba(16, 185, 129, 0.25)"}`,
           borderRadius: "999px",
           padding: "0.65rem 1.35rem",
           boxShadow: isOpen
-            ? "0 10px 30px rgba(99, 102, 241, 0.45), 0 0 20px rgba(6, 182, 212, 0.3)"
+            ? "0 10px 30px rgba(16, 185, 129, 0.45), 0 0 20px rgba(52, 211, 153, 0.3)"
             : isDark
-            ? "0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(99, 102, 241, 0.15)"
-            : "0 8px 25px rgba(99, 102, 241, 0.15)",
+            ? "0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(16, 185, 129, 0.2)"
+            : "0 8px 25px rgba(16, 185, 129, 0.15)",
           cursor: "pointer",
           transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
@@ -204,7 +204,7 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
               height: "100%",
               width: "100%",
               borderRadius: "50%",
-              background: "#10b981",
+              background: "#34d399",
               opacity: 0.75,
               animation: "ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite",
             }}
@@ -215,8 +215,8 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
               borderRadius: "50%",
               height: 9,
               width: 9,
-              background: "#10b981",
-              boxShadow: "0 0 8px #10b981",
+              background: "#34d399",
+              boxShadow: "0 0 8px #34d399",
             }}
           />
         </span>
@@ -230,7 +230,7 @@ export default function DateTimeWidget({ email, isDark = true }: { email: string
         <span
           style={{
             fontSize: "0.68rem",
-            color: isDark ? "#a5b4fc" : "#4f46e5",
+            color: isDark ? "#6ee7b7" : "#047857",
             transition: "transform 0.2s",
             transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
           }}

@@ -113,20 +113,20 @@ export default function WelcomeScreen({
         overflow: "hidden",
       }}
     >
-      {/* Ambient Glows */}
+      {/* Ambient Pulsing Glow Blobs */}
       <div
         aria-hidden
         style={{
           position: "absolute",
-          top: "12%",
-          left: "22%",
-          width: 520,
-          height: 520,
+          top: "15%",
+          left: "20%",
+          width: 500,
+          height: 500,
           borderRadius: "50%",
           background: isDark
-            ? "radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, transparent 70%)"
-            : "radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%)",
-          filter: "blur(70px)",
+            ? "radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 70%)",
+          filter: "blur(80px)",
           pointerEvents: "none",
           animation: "pulseGlow 8s ease-in-out infinite",
         }}
@@ -141,8 +141,8 @@ export default function WelcomeScreen({
           height: 480,
           borderRadius: "50%",
           background: isDark
-            ? "radial-gradient(circle, rgba(6, 182, 212, 0.18) 0%, transparent 70%)"
-            : "radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%)",
+            ? "radial-gradient(circle, rgba(52, 211, 153, 0.18) 0%, transparent 70%)"
+            : "radial-gradient(circle, rgba(52, 211, 153, 0.1) 0%, transparent 70%)",
           filter: "blur(70px)",
           pointerEvents: "none",
           animation: "pulseGlow 10s ease-in-out infinite 2s",
@@ -152,7 +152,7 @@ export default function WelcomeScreen({
       {/* Holographic 3D Card */}
       <Card3D
         maxTilt={16}
-        accentColor="#6366f1"
+        accentColor={isDark ? "#10b981" : "#059669"}
         isDark={isDark}
         style={{
           maxWidth: 680,
@@ -161,15 +161,15 @@ export default function WelcomeScreen({
       >
         <div
           style={{
-            background: isDark ? "rgba(15, 14, 28, 0.82)" : "rgba(255, 255, 255, 0.88)",
+            background: isDark ? "rgba(8, 20, 15, 0.86)" : "rgba(255, 255, 255, 0.88)",
             backdropFilter: "blur(30px)",
             WebkitBackdropFilter: "blur(30px)",
-            border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.35)" : "rgba(99, 102, 241, 0.25)"}`,
+            border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.35)" : "rgba(16, 185, 129, 0.25)"}`,
             borderRadius: "32px",
             padding: "clamp(2.2rem, 5vw, 3.75rem) clamp(1.5rem, 5vw, 3rem)",
             boxShadow: isDark
-              ? "0 30px 80px rgba(0, 0, 0, 0.7), 0 0 45px rgba(99, 102, 241, 0.25)"
-              : "0 30px 80px rgba(99, 102, 241, 0.12), 0 0 35px rgba(99, 102, 241, 0.1)",
+              ? "0 30px 80px rgba(0, 0, 0, 0.75), 0 0 45px rgba(16, 185, 129, 0.25)"
+              : "0 30px 80px rgba(16, 185, 129, 0.12), 0 0 35px rgba(16, 185, 129, 0.1)",
             textAlign: "center",
             display: "flex",
             flexDirection: "column",
@@ -184,12 +184,12 @@ export default function WelcomeScreen({
               display: "inline-flex",
               alignItems: "center",
               gap: "0.6rem",
-              background: isDark ? "rgba(99, 102, 241, 0.12)" : "rgba(99, 102, 241, 0.08)",
-              border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.4)" : "rgba(99, 102, 241, 0.25)"}`,
+              background: isDark ? "rgba(16, 185, 129, 0.14)" : "rgba(16, 185, 129, 0.08)",
+              border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.4)" : "rgba(16, 185, 129, 0.25)"}`,
               borderRadius: "999px",
               padding: "0.4rem 1.15rem",
               marginBottom: "1.75rem",
-              boxShadow: "0 0 20px rgba(99, 102, 241, 0.15)",
+              boxShadow: "0 0 20px rgba(16, 185, 129, 0.15)",
             }}
           >
             <span
@@ -197,8 +197,8 @@ export default function WelcomeScreen({
                 width: 7,
                 height: 7,
                 borderRadius: "50%",
-                background: "#06b6d4",
-                boxShadow: "0 0 10px #06b6d4",
+                background: "#34d399",
+                boxShadow: "0 0 10px #34d399",
                 animation: "pulseGlow 2s ease-in-out infinite",
               }}
             />
@@ -207,7 +207,7 @@ export default function WelcomeScreen({
                 fontFamily: "'JetBrains Mono', monospace",
                 fontSize: "0.72rem",
                 letterSpacing: "0.12em",
-                color: isDark ? "#e2e8f0" : "#4338ca",
+                color: isDark ? "#6ee7b7" : "#047857",
                 textTransform: "uppercase",
                 fontWeight: 600,
               }}
@@ -233,11 +233,11 @@ export default function WelcomeScreen({
             <span
               style={{
                 background: isDark
-                  ? "linear-gradient(135deg, #ffffff 0%, #a5b4fc 40%, #6366f1 70%, #06b6d4 100%)"
-                  : "linear-gradient(135deg, #0f172a 0%, #4338ca 50%, #0284c7 100%)",
+                  ? "linear-gradient(135deg, #ffffff 0%, #a7f3d0 35%, #34d399 70%, #10b981 100%)"
+                  : "linear-gradient(135deg, #0f172a 0%, #059669 50%, #0284c7 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
-                filter: isDark ? "drop-shadow(0 0 25px rgba(99, 102, 241, 0.4))" : "none",
+                filter: isDark ? "drop-shadow(0 0 25px rgba(52, 211, 153, 0.45))" : "none",
               }}
             >
               {name}
@@ -273,15 +273,15 @@ export default function WelcomeScreen({
             }}
           >
             {[
-              { val: cgpa, label: "CGPA", color: "#6366f1" },
-              { val: problemsCount, label: "CP Solved", color: "#06b6d4" },
-              { val: "6+", label: "Projects", color: "#10b981" },
+              { val: cgpa, label: "CGPA", color: isDark ? "#34d399" : "#059669" },
+              { val: problemsCount, label: "CP Solved", color: isDark ? "#10b981" : "#0284c7" },
+              { val: "6+", label: "Projects", color: isDark ? "#6ee7b7" : "#10b981" },
             ].map((stat) => (
               <div
                 key={stat.label}
                 style={{
-                  background: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(99, 102, 241, 0.05)",
-                  border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(99, 102, 241, 0.15)"}`,
+                  background: isDark ? "rgba(52, 211, 153, 0.05)" : "rgba(16, 185, 129, 0.05)",
+                  border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.2)" : "rgba(16, 185, 129, 0.15)"}`,
                   borderRadius: "16px",
                   padding: "0.85rem 0.5rem",
                   display: "flex",
@@ -312,7 +312,7 @@ export default function WelcomeScreen({
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: isDark ? "#a5b4fc" : "#4338ca", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700 }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: isDark ? "#6ee7b7" : "#047857", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700 }}>
                 Directing to Portfolio
               </span>
               <span
@@ -320,7 +320,7 @@ export default function WelcomeScreen({
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: "1.1rem",
                   fontWeight: 900,
-                  color: "#06b6d4",
+                  color: isDark ? "#34d399" : "#059669",
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "0.2rem",
@@ -338,16 +338,16 @@ export default function WelcomeScreen({
                 background: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
                 borderRadius: "999px",
                 overflow: "hidden",
-                border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.25)" : "rgba(99, 102, 241, 0.15)"}`,
+                border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(16, 185, 129, 0.15)"}`,
               }}
             >
               <div
                 style={{
                   height: "100%",
                   width: `${progressPct}%`,
-                  background: "linear-gradient(90deg, #6366f1 0%, #06b6d4 100%)",
+                  background: "linear-gradient(90deg, #10b981 0%, #34d399 100%)",
                   borderRadius: "999px",
-                  boxShadow: "0 0 15px #06b6d4",
+                  boxShadow: "0 0 15px #34d399",
                   transition: "width 1s linear",
                 }}
               />
