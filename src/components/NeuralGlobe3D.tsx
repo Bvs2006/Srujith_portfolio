@@ -29,8 +29,8 @@ export default function NeuralGlobe3D({ isDark = true, size = 380 }: NeuralGlobe
     const points: Array<{ x: number; y: number; z: number; ox: number; oy: number; oz: number; size: number; color: string }> = [];
 
     const palette = isDark
-      ? ["#34d399", "#10b981", "#6ee7b7", "#a7f3d0", "#4ade80", "#059669", "#ffffff"]
-      : ["#047857", "#059669", "#10b981", "#0284c7", "#16a34a", "#064e3b"];
+      ? ["#6366f1", "#06b6d4", "#a855f7", "#38bdf8", "#10b981", "#ffffff"]
+      : ["#4f46e5", "#0284c7", "#7c3aed", "#059669", "#d97706", "#e11d48"];
 
     // Fibonacci sphere distribution for uniform 3D distribution
     const phi = Math.PI * (3 - Math.sqrt(5));
@@ -57,9 +57,9 @@ export default function NeuralGlobe3D({ isDark = true, size = 380 }: NeuralGlobe
     // Outer orbital rings
     const ringCount = 3;
     const ringRays: Array<{ angleX: number; angleY: number; angleZ: number; speed: number; color: string }> = [
-      { angleX: 0.4, angleY: 0.6, angleZ: 0.2, speed: 0.012, color: isDark ? "#34d399" : "#059669" },
-      { angleX: -0.5, angleY: 0.8, angleZ: -0.3, speed: -0.015, color: isDark ? "#10b981" : "#10b981" },
-      { angleX: 0.8, angleY: -0.4, angleZ: 0.6, speed: 0.009, color: isDark ? "#6ee7b7" : "#0284c7" },
+      { angleX: 0.4, angleY: 0.6, angleZ: 0.2, speed: 0.012, color: isDark ? "#6366f1" : "#4f46e5" },
+      { angleX: -0.5, angleY: 0.8, angleZ: -0.3, speed: -0.015, color: isDark ? "#06b6d4" : "#0284c7" },
+      { angleX: 0.8, angleY: -0.4, angleZ: 0.6, speed: 0.009, color: isDark ? "#a855f7" : "#7c3aed" },
     ];
 
     let rotX = 0;

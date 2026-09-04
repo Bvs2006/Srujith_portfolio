@@ -233,11 +233,11 @@ export default function WelcomeScreen({
             <span
               style={{
                 background: isDark
-                  ? "linear-gradient(135deg, #ffffff 0%, #a7f3d0 35%, #34d399 70%, #10b981 100%)"
-                  : "linear-gradient(135deg, #0f172a 0%, #059669 50%, #0284c7 100%)",
+                  ? "linear-gradient(135deg, #ffffff 0%, #e0e7ff 35%, #a5b4fc 65%, #6366f1 100%)"
+                  : "linear-gradient(135deg, #0f172a 0%, #6366f1 50%, #06b6d4 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
-                filter: isDark ? "drop-shadow(0 0 25px rgba(52, 211, 153, 0.45))" : "none",
+                filter: isDark ? "drop-shadow(0 0 25px rgba(99, 102, 241, 0.45))" : "none",
               }}
             >
               {name}
@@ -273,15 +273,15 @@ export default function WelcomeScreen({
             }}
           >
             {[
-              { val: cgpa, label: "CGPA", color: isDark ? "#34d399" : "#059669" },
-              { val: problemsCount, label: "CP Solved", color: isDark ? "#10b981" : "#0284c7" },
-              { val: "6+", label: "Projects", color: isDark ? "#6ee7b7" : "#10b981" },
+              { val: cgpa, label: "CGPA", color: isDark ? "#818cf8" : "#4f46e5" },
+              { val: problemsCount, label: "CP Solved", color: isDark ? "#38bdf8" : "#0284c7" },
+              { val: "6+", label: "Projects", color: isDark ? "#34d399" : "#059669" },
             ].map((stat) => (
               <div
                 key={stat.label}
                 style={{
-                  background: isDark ? "rgba(52, 211, 153, 0.05)" : "rgba(16, 185, 129, 0.05)",
-                  border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.2)" : "rgba(16, 185, 129, 0.15)"}`,
+                  background: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(16, 185, 129, 0.05)",
+                  border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(16, 185, 129, 0.15)"}`,
                   borderRadius: "16px",
                   padding: "0.85rem 0.5rem",
                   display: "flex",
@@ -312,7 +312,7 @@ export default function WelcomeScreen({
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: isDark ? "#6ee7b7" : "#047857", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700 }}>
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: isDark ? "#a5b4fc" : "#4f46e5", letterSpacing: "0.08em", textTransform: "uppercase", fontWeight: 700 }}>
                 Directing to Portfolio
               </span>
               <span
@@ -320,7 +320,7 @@ export default function WelcomeScreen({
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: "1.1rem",
                   fontWeight: 900,
-                  color: isDark ? "#34d399" : "#059669",
+                  color: isDark ? "#818cf8" : "#4f46e5",
                   display: "inline-flex",
                   alignItems: "center",
                   gap: "0.2rem",
@@ -338,16 +338,16 @@ export default function WelcomeScreen({
                 background: isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.08)",
                 borderRadius: "999px",
                 overflow: "hidden",
-                border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(16, 185, 129, 0.15)"}`,
+                border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.3)" : "rgba(16, 185, 129, 0.15)"}`,
               }}
             >
               <div
                 style={{
                   height: "100%",
                   width: `${progressPct}%`,
-                  background: "linear-gradient(90deg, #10b981 0%, #34d399 100%)",
+                  background: "linear-gradient(90deg, #6366f1 0%, #06b6d4 100%)",
                   borderRadius: "999px",
-                  boxShadow: "0 0 15px #34d399",
+                  boxShadow: "0 0 15px #06b6d4",
                   transition: "width 1s linear",
                 }}
               />

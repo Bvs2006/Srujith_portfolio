@@ -88,13 +88,13 @@ export default function HeroHUD({
                 fontSize: "0.68rem",
                 fontWeight: activeTab === tab.id ? 700 : 500,
                 color: activeTab === tab.id ? "#ffffff" : textMuted,
-                background: activeTab === tab.id ? "linear-gradient(135deg, #10b981 0%, #059669 100%)" : "transparent",
+                background: activeTab === tab.id ? "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)" : "transparent",
                 border: "none",
                 borderRadius: "8px",
                 padding: "0.45rem 0.6rem",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
-                boxShadow: activeTab === tab.id ? "0 4px 15px rgba(16, 185, 129, 0.45)" : "none",
+                boxShadow: activeTab === tab.id ? "0 4px 15px rgba(99, 102, 241, 0.45)" : "none",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -111,22 +111,22 @@ export default function HeroHUD({
         {activeTab === "ai" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-              <div style={{ background: isDark ? "rgba(52, 211, 153, 0.05)" : "rgba(16, 185, 129, 0.04)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.15)" : "rgba(0, 0, 0, 0.06)"}` }}>
+              <div style={{ background: isDark ? "rgba(99, 102, 241, 0.06)" : "rgba(99, 102, 241, 0.04)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.2)" : "rgba(0, 0, 0, 0.06)"}` }}>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.6rem", color: textMuted, textTransform: "uppercase", letterSpacing: "0.08em" }}>Model Accuracy</span>
-                <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.45rem", fontWeight: 800, color: "#34d399", margin: "2px 0 0 0" }}>88.4%</p>
+                <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.45rem", fontWeight: 800, color: "#818cf8", margin: "2px 0 0 0" }}>88.4%</p>
                 <span style={{ fontSize: "0.58rem", color: textMuted, fontFamily: "'JetBrains Mono', monospace" }}>IMDb 50k TF-IDF Pipeline</span>
               </div>
-              <div style={{ background: isDark ? "rgba(52, 211, 153, 0.05)" : "rgba(16, 185, 129, 0.04)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.15)" : "rgba(0, 0, 0, 0.06)"}` }}>
+              <div style={{ background: isDark ? "rgba(6, 182, 212, 0.06)" : "rgba(6, 182, 212, 0.04)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${isDark ? "rgba(6, 182, 212, 0.2)" : "rgba(0, 0, 0, 0.06)"}` }}>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.6rem", color: textMuted, textTransform: "uppercase", letterSpacing: "0.08em" }}>Cross-Entropy Loss</span>
-                <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.45rem", fontWeight: 800, color: "#10b981", margin: "2px 0 0 0" }}>{lossValue}</p>
+                <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.45rem", fontWeight: 800, color: "#06b6d4", margin: "2px 0 0 0" }}>{lossValue}</p>
                 <span style={{ fontSize: "0.58rem", color: textMuted, fontFamily: "'JetBrains Mono', monospace" }}>Convergence Verified</span>
               </div>
             </div>
 
             {/* Neural Topology Visualizer Bar */}
-            <div style={{ background: isDark ? "rgba(0, 0, 0, 0.4)" : "rgba(241, 245, 249, 0.8)", borderRadius: "14px", padding: "1rem", border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.15)" : "rgba(0, 0, 0, 0.06)"}` }}>
+            <div style={{ background: isDark ? "rgba(0, 0, 0, 0.4)" : "rgba(241, 245, 249, 0.8)", borderRadius: "14px", padding: "1rem", border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.08)" : "rgba(0, 0, 0, 0.06)"}` }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: isDark ? "#6ee7b7" : "#059669", fontWeight: 700 }}>Dense Feature Layers (NLP / Scikit)</span>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: isDark ? "#a5b4fc" : "#4f46e5", fontWeight: 700 }}>Dense Feature Layers (NLP / Scikit)</span>
                 <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.62rem", color: "#34d399" }}>Active</span>
               </div>
               <div style={{ display: "flex", gap: "4px", height: "24px", alignItems: "flex-end" }}>
@@ -136,10 +136,10 @@ export default function HeroHUD({
                     style={{
                       flex: 1,
                       height: `${h}%`,
-                      background: `linear-gradient(to top, #059669, ${i % 2 === 0 ? "#10b981" : "#34d399"})`,
+                      background: `linear-gradient(to top, #6366f1, ${i % 2 === 0 ? "#06b6d4" : "#a855f7"})`,
                       borderRadius: "3px",
                       opacity: 0.85,
-                      boxShadow: "0 0 8px rgba(52, 211, 153, 0.35)",
+                      boxShadow: "0 0 8px rgba(99, 102, 241, 0.35)",
                       transition: "height 0.4s ease",
                     }}
                   />

@@ -40,8 +40,8 @@ export default function ParticleCanvas({ isDark = true }: { isDark?: boolean }) 
       alpha: number;
     }> = [];
 
-    const darkColors = ["#34d399", "#10b981", "#6ee7b7", "#a7f3d0", "#4ade80", "#22c55e", "#059669", "#86efac"];
-    const lightColors = ["#059669", "#10b981", "#0284c7", "#16a34a", "#0d9488", "#047857"];
+    const darkColors = ["#818cf8", "#06b6d4", "#c084fc", "#38bdf8", "#10b981", "#fb7185", "#34d399"];
+    const lightColors = ["#4f46e5", "#0284c7", "#7c3aed", "#059669", "#d97706", "#e11d48"];
     const colors = isDark ? darkColors : lightColors;
 
     for (let i = 0; i < particleCount; i++) {
