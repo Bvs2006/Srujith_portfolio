@@ -14,8 +14,7 @@ import ExperienceSection from "./components/ExperienceSection";
 import ScrollProgress from "./components/ScrollProgress";
 import CursorGlow from "./components/CursorGlow";
 import BackToTop from "./components/BackToTop";
-import CommandPalette from "./components/CommandPalette";
-import { soundManager } from "./components/SoundFX";
+import ContactSection from "./components/ContactSection";
 import { usePortfolioStore, ProjectItem, CertItem } from "./hooks/usePortfolioStore";
 import { useTheme } from "./hooks/useTheme";
 
@@ -46,8 +45,6 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [selectedCert, setSelectedCert] = useState<CertItem | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isCmdOpen, setIsCmdOpen] = useState(false);
-  const [isMuted, setIsMuted] = useState(soundManager.isMuted);
   const [projectFilter, setProjectFilter] = useState("All");
   const [skillSearch, setSkillSearch] = useState("");
   const [emailCopied, setEmailCopied] = useState(false);
@@ -243,16 +240,6 @@ export default function App() {
 
       {/* ── Back to Top Floating Button with Progress Ring ── */}
       <BackToTop isDark={isDark} />
-
-      {/* ── Command Palette (Ctrl + K) ── */}
-      <CommandPalette
-        isOpen={isCmdOpen}
-        onClose={() => setIsCmdOpen(false)}
-        isDark={isDark}
-        toggleTheme={toggleTheme}
-        projects={projects}
-        personalInfo={personalInfo}
-      />
 
       {/* ── Welcome Screen ── */}
       {showWelcome && (
@@ -649,82 +636,12 @@ export default function App() {
           ))}
         </div>
 
-        {/* Action Buttons: Quick Cmd + Sound + Theme Toggle + Resume + Mobile Toggle */}
+        {/* Action Buttons: Theme Toggle + Resume + Mobile Toggle */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-          {/* Quick Command Palette Button */}
-          <button
-            id="cmd-palette-trigger"
-            onClick={() => {
-              soundManager.playClick();
-              setIsCmdOpen(true);
-            }}
-            onMouseEnter={() => soundManager.playHover()}
-            title="Command Palette (Ctrl + K)"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.4rem",
-              background: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.04)",
-              border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.1)"}`,
-              borderRadius: "999px",
-              padding: "0.35rem 0.75rem",
-              cursor: "pointer",
-              color: isDark ? "#cbd5e1" : "#475569",
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: "0.75rem",
-              fontWeight: 600,
-              transition: "all 0.2s ease",
-            }}
-          >
-            <span>⚡</span>
-            <span className="hidden sm:inline">Commands</span>
-            <kbd
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: "0.62rem",
-                background: isDark ? "rgba(0, 0, 0, 0.4)" : "rgba(255, 255, 255, 0.8)",
-                padding: "1px 5px",
-                borderRadius: "4px",
-                color: isDark ? "#94a3b8" : "#64748b",
-                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)"}`,
-              }}
-            >
-              ⌘K
-            </kbd>
-          </button>
-
-          {/* Sound FX Toggle Button */}
-          <button
-            onClick={() => {
-              const muted = soundManager.toggleMute();
-              setIsMuted(muted);
-            }}
-            title={isMuted ? "Enable Sound Effects (Sci-Fi Audio)" : "Mute Sound Effects"}
-            style={{
-              background: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.04)",
-              border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.1)"}`,
-              borderRadius: "50%",
-              width: 34,
-              height: 34,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              color: isDark ? "#ffffff" : "#0f172a",
-              fontSize: "0.85rem",
-              transition: "all 0.2s ease",
-            }}
-          >
-            {isMuted ? "🔇" : "🔊"}
-          </button>
-
           {/* Dark / Light Mode Toggle */}
           <ThemeToggle
             isDark={isDark}
-            onToggle={() => {
-              soundManager.playClick(800, 0.05);
-              toggleTheme();
-            }}
+            onToggle={toggleTheme}
           />
 
           {personalInfo.resumeUrl && (
@@ -732,8 +649,6 @@ export default function App() {
               href={personalInfo.resumeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => soundManager.playClick()}
-              onMouseEnter={() => soundManager.playHover()}
               style={{
                 fontFamily: "'Outfit', sans-serif",
                 fontSize: "0.8rem",
@@ -755,10 +670,7 @@ export default function App() {
           )}
 
           <button
-            onClick={() => {
-              soundManager.playClick();
-              setMobileMenuOpen(!mobileMenuOpen);
-            }}
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden"
             style={{
               background: "none",
@@ -811,37 +723,9 @@ export default function App() {
             {/* Quick Action Pills in Mobile Menu */}
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", paddingBottom: "1rem", borderBottom: `1px solid ${cardBorder}` }}>
               <button
-                onClick={() => {
-                  soundManager.playClick();
-                  setMobileMenuOpen(false);
-                  setIsCmdOpen(true);
-                }}
+                onClick={() => toggleTheme()}
                 style={{
                   flex: 1,
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: "0.78rem",
-                  fontWeight: 700,
-                  color: isDark ? "#34d399" : "#4f46e5",
-                  background: isDark ? "rgba(52, 211, 153, 0.1)" : "rgba(99, 102, 241, 0.08)",
-                  border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(99, 102, 241, 0.2)"}`,
-                  borderRadius: "10px",
-                  padding: "0.55rem 0.75rem",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "0.35rem",
-                  cursor: "pointer",
-                }}
-              >
-                <span>⚡</span> Commands
-              </button>
-
-              <button
-                onClick={() => {
-                  soundManager.playClick();
-                  toggleTheme();
-                }}
-                style={{
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: "0.78rem",
                   fontWeight: 700,
@@ -857,7 +741,7 @@ export default function App() {
                   cursor: "pointer",
                 }}
               >
-                <span>{isDark ? "☀️ Light" : "🌙 Dark"}</span>
+                <span>{isDark ? "☀️ Light Mode" : "🌙 Dark Mode"}</span>
               </button>
 
               {personalInfo.resumeUrl && (
@@ -865,7 +749,6 @@ export default function App() {
                   href={personalInfo.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => soundManager.playClick()}
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     fontSize: "0.78rem",
@@ -892,7 +775,6 @@ export default function App() {
                 <button
                   key={id}
                   onClick={() => {
-                    soundManager.playClick();
                     scrollTo(id);
                   }}
                   style={{
@@ -1036,11 +918,7 @@ export default function App() {
             <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
               <button
                 onClick={() => {
-                  soundManager.playClick();
                   scrollTo("projects");
-                }}
-                onMouseEnter={() => {
-                  soundManager.playHover();
                 }}
                 style={{
                   fontFamily: "'Outfit', sans-serif",
@@ -1058,7 +936,6 @@ export default function App() {
                   transition: "all 0.25s",
                 }}
                 onMouseEnter={(e) => {
-                  soundManager.playHover();
                   e.currentTarget.style.transform = "translateY(-3px) scale(1.02)";
                   e.currentTarget.style.boxShadow = "0 15px 40px rgba(99, 102, 241, 0.65)";
                 }}
@@ -1075,8 +952,6 @@ export default function App() {
                   href={personalInfo.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={() => soundManager.playClick()}
-                  onMouseEnter={() => soundManager.playHover()}
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     fontSize: "0.9rem",
@@ -1093,7 +968,6 @@ export default function App() {
                     boxShadow: isDark ? "none" : "0 4px 15px rgba(99, 102, 241, 0.1)",
                   }}
                   onMouseEnter={(e) => {
-                    soundManager.playHover();
                     e.currentTarget.style.borderColor = "#a5b4fc";
                     e.currentTarget.style.transform = "translateY(-3px)";
                   }}
@@ -1369,10 +1243,8 @@ export default function App() {
                 <button
                   key={cat}
                   onClick={() => {
-                    soundManager.playClick();
                     setProjectFilter(cat);
                   }}
-                  onMouseEnter={() => soundManager.playHover()}
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     fontSize: "0.78rem",
@@ -1408,7 +1280,6 @@ export default function App() {
                 accentColor={p.accent || "#6366f1"}
                 isDark={isDark}
                 onClick={() => {
-                  soundManager.playClick();
                   setSelectedProject(p);
                 }}
                 style={{ height: "100%" }}
@@ -1634,7 +1505,6 @@ export default function App() {
                       {filteredItems.map((s) => (
                         <span
                           key={s}
-                          onMouseEnter={() => soundManager.playHover()}
                           style={{
                             fontFamily: "'JetBrains Mono', monospace",
                             fontSize: "0.72rem",
@@ -1814,169 +1684,26 @@ export default function App() {
       <LiveProfiles isDark={isDark} />
 
       {/* ── CONTACT SECTION ── */}
-      <section id="contact" style={{ padding: "8rem clamp(1.5rem, 5vw, 6rem) 5rem", position: "relative", zIndex: 10 }}>
-        <div style={{ maxWidth: 1300, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#10b981", letterSpacing: "0.2em", fontWeight: 700 }}>
-              06
-            </span>
-            <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, rgba(168, 85, 247, 0.5), transparent)" }} />
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: textMuted, letterSpacing: "0.16em", textTransform: "uppercase" }}>
-              Get in Touch
-            </span>
-          </div>
+      <ContactSection
+        personalInfo={personalInfo}
+        isDark={isDark}
+        cardBg={cardBg}
+        cardBorder={cardBorder}
+        textMain={textMain}
+        textMuted={textMuted}
+      />
 
-          <Card3D maxTilt={10} accentColor="#6366f1" isDark={isDark}>
-            <div
-              style={{
-                background: cardBg,
-                backdropFilter: "blur(24px)",
-                border: `1px solid ${isDark ? "rgba(99, 102, 241, 0.35)" : "rgba(99, 102, 241, 0.2)"}`,
-                borderRadius: "36px",
-                padding: "clamp(2rem, 5vw, 4.5rem)",
-                boxShadow: isDark
-                  ? "0 30px 80px rgba(0, 0, 0, 0.7), 0 0 50px rgba(99, 102, 241, 0.2)"
-                  : "0 30px 80px rgba(99, 102, 241, 0.12)",
-              }}
-            >
-              <h2
-                style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  fontSize: "clamp(2.5rem, 6vw, 4.8rem)",
-                  fontWeight: 900,
-                  lineHeight: 1.02,
-                  color: textMain,
-                  marginBottom: "1.5rem",
-                  letterSpacing: "-0.03em",
-                }}
-              >
-                Let's build something <br />
-                <span className={isDark ? "gradient-name-dark" : "gradient-name-light"}>
-                  extraordinary
-                </span>
-                .
-              </h2>
-
-              <p style={{ color: textMuted, fontSize: "1.05rem", lineHeight: 1.7, maxWidth: 520, marginBottom: "2.5rem" }}>
-                Open to software engineering internships, AI/ML projects, and full-time roles. I respond rapidly.
-              </p>
-
-              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
-                <a
-                  href={`mailto:${personalInfo.email}`}
-                  onClick={() => soundManager.playClick()}
-                  onMouseEnter={() => soundManager.playHover()}
-                  style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    fontSize: "0.9rem",
-                    fontWeight: 800,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    background: "linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)",
-                    color: "#ffffff",
-                    border: "none",
-                    borderRadius: "14px",
-                    padding: "1rem 2.25rem",
-                    textDecoration: "none",
-                    boxShadow: "0 8px 25px rgba(99, 102, 241, 0.4)",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span>✉️</span> {personalInfo.email} ↗
-                </a>
-
-                {/* One-Click Copy Email Button */}
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(personalInfo.email);
-                    setEmailCopied(true);
-                    soundManager.playSuccess();
-                    setTimeout(() => setEmailCopied(false), 2400);
-                  }}
-                  onMouseEnter={() => soundManager.playHover()}
-                  style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    fontSize: "0.88rem",
-                    fontWeight: 700,
-                    background: emailCopied
-                      ? (isDark ? "rgba(16, 185, 129, 0.25)" : "rgba(16, 185, 129, 0.15)")
-                      : (isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff"),
-                    color: emailCopied ? (isDark ? "#34d399" : "#059669") : textMain,
-                    border: `1px solid ${emailCopied ? (isDark ? "#34d399" : "#059669") : cardBorder}`,
-                    borderRadius: "14px",
-                    padding: "0.95rem 1.6rem",
-                    cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "0.45rem",
-                    transition: "all 0.2s ease",
-                  }}
-                >
-                  <span>{emailCopied ? "✓" : "📋"}</span>
-                  <span>{emailCopied ? "Email Copied!" : "Copy Email"}</span>
-                </button>
-
-                <a
-                  href={personalInfo.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => soundManager.playClick()}
-                  onMouseEnter={() => soundManager.playHover()}
-                  style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    fontSize: "0.9rem",
-                    fontWeight: 800,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    background: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
-                    color: textMain,
-                    border: `1px solid ${cardBorder}`,
-                    borderRadius: "14px",
-                    padding: "1rem 2rem",
-                    textDecoration: "none",
-                  }}
-                >
-                  LinkedIn ↗
-                </a>
-                <a
-                  href={personalInfo.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => soundManager.playClick()}
-                  onMouseEnter={() => soundManager.playHover()}
-                  style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    fontSize: "0.9rem",
-                    fontWeight: 800,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.05em",
-                    background: isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff",
-                    color: textMain,
-                    border: `1px solid ${cardBorder}`,
-                    borderRadius: "14px",
-                    padding: "1rem 2rem",
-                    textDecoration: "none",
-                  }}
-                >
-                  GitHub ↗
-                </a>
-              </div>
-            </div>
-          </Card3D>
-
-          {/* Footer */}
-          <div style={{ marginTop: "5rem", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", paddingTop: "2rem", borderTop: `1px solid ${cardBorder}` }}>
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: textMuted }}>
-              © {new Date().getFullYear()} {personalInfo.name} · All rights reserved.
-            </span>
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: textMuted }}>
-              3D PERSPECTIVE · DARK & LIGHT MODE · MODERN TYPOGRAPHY
-            </span>
-          </div>
+      {/* ── FOOTER ── */}
+      <footer style={{ padding: "2rem clamp(1.5rem, 5vw, 6rem) 3.5rem", position: "relative", zIndex: 10 }}>
+        <div style={{ maxWidth: 1300, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem", paddingTop: "2rem", borderTop: `1px solid ${cardBorder}` }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: textMuted }}>
+            © {new Date().getFullYear()} {personalInfo.name} · All rights reserved.
+          </span>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: textMuted }}>
+            3D PERSPECTIVE · DARK & LIGHT MODE · MODERN TYPOGRAPHY
+          </span>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

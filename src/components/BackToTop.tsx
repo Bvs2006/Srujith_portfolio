@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { soundManager } from "./SoundFX";
 
 interface BackToTopProps {
   isDark?: boolean;
@@ -30,7 +29,6 @@ export default function BackToTop({ isDark = true }: BackToTopProps) {
   }, []);
 
   const scrollToTop = () => {
-    soundManager.playClick(650, 0.08);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -43,7 +41,6 @@ export default function BackToTop({ isDark = true }: BackToTopProps) {
   return (
     <button
       onClick={scrollToTop}
-      onMouseEnter={() => soundManager.playHover()}
       aria-label="Scroll back to top"
       style={{
         position: "fixed",
