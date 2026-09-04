@@ -11,6 +11,7 @@ import HeroHUD from "./components/HeroHUD";
 import NeuralGlobe3D from "./components/NeuralGlobe3D";
 import HoloCard from "./components/HoloCard";
 import ExperienceSection from "./components/ExperienceSection";
+import InteractiveTerminal from "./components/InteractiveTerminal";
 import ScrollProgress from "./components/ScrollProgress";
 import CursorGlow from "./components/CursorGlow";
 import BackToTop from "./components/BackToTop";
@@ -48,6 +49,9 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isCmdOpen, setIsCmdOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(soundManager.isMuted);
+  const [projectFilter, setProjectFilter] = useState("All");
+  const [skillSearch, setSkillSearch] = useState("");
+  const [emailCopied, setEmailCopied] = useState(false);
 
   // Typewriter rotating roles
   const [roleIndex, setRoleIndex] = useState(0);
@@ -1175,46 +1179,57 @@ export default function App() {
               </div>
             </div>
 
-            {/* Academic Journey Card */}
-            <Card3D maxTilt={12} accentColor="#06b6d4" isDark={isDark}>
-              <div
-                style={{
-                  background: cardBg,
-                  backdropFilter: "blur(20px)",
-                  border: `1px solid ${isDark ? "rgba(6, 182, 212, 0.3)" : "rgba(6, 182, 212, 0.25)"}`,
-                  borderRadius: "28px",
-                  padding: "2.25rem",
-                  boxShadow: isDark ? "0 20px 50px rgba(0,0,0,0.5)" : "0 20px 50px rgba(6, 182, 212, 0.08)",
-                }}
-              >
-                <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.4rem", fontWeight: 800, color: textMain, marginBottom: "1.5rem" }}>
-                  Academic & Technical Path
-                </h3>
+              {/* Academic Journey Card */}
+              <Card3D maxTilt={12} accentColor="#06b6d4" isDark={isDark}>
+                <div
+                  style={{
+                    background: cardBg,
+                    backdropFilter: "blur(20px)",
+                    border: `1px solid ${isDark ? "rgba(6, 182, 212, 0.3)" : "rgba(6, 182, 212, 0.25)"}`,
+                    borderRadius: "28px",
+                    padding: "2.25rem",
+                    boxShadow: isDark ? "0 20px 50px rgba(0,0,0,0.5)" : "0 20px 50px rgba(6, 182, 212, 0.08)",
+                  }}
+                >
+                  <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.4rem", fontWeight: 800, color: textMain, marginBottom: "1.5rem" }}>
+                    Academic & Technical Path
+                  </h3>
 
-                <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                  {[
-                    { label: "University", value: personalInfo.university },
-                    { label: "Degree Program", value: personalInfo.degree },
-                    { label: "CGPA (Current)", value: personalInfo.cgpa },
-                    { label: "Pre-University (XII)", value: personalInfo.class12 },
-                    { label: "Competitive Stats", value: `${personalInfo.problemsCount} Solved across 6 Platforms` },
-                    { label: "Primary Email", value: personalInfo.email },
-                  ].map(({ label, value }) => (
-                    <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "0.75rem", borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)"}` }}>
-                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: textMuted, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600 }}>
-                        {label}
-                      </span>
-                      <span style={{ fontSize: "0.88rem", color: textMain, fontWeight: 500, textAlign: "right" }}>
-                        {value}
-                      </span>
-                    </div>
-                  ))}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                    {[
+                      { label: "University", value: personalInfo.university },
+                      { label: "Degree Program", value: personalInfo.degree },
+                      { label: "CGPA (Current)", value: personalInfo.cgpa },
+                      { label: "Pre-University (XII)", value: personalInfo.class12 },
+                      { label: "Competitive Stats", value: `${personalInfo.problemsCount} Solved across 6 Platforms` },
+                      { label: "Primary Email", value: personalInfo.email },
+                    ].map(({ label, value }) => (
+                      <div key={label} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: "0.75rem", borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)"}` }}>
+                        <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: textMuted, letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 600 }}>
+                          {label}
+                        </span>
+                        <span style={{ fontSize: "0.88rem", color: textMain, fontWeight: 500, textAlign: "right" }}>
+                          {value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
+              </Card3D>
+            </div>
+
+            {/* Live Interactive Code Terminal / Sandbox Runner */}
+            <div style={{ marginTop: "3.5rem" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+                <span style={{ fontSize: "0.8rem", color: "#10b981" }}>▶</span>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: isDark ? "#6ee7b7" : "#059669", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+                  Interactive Code Execution Sandbox (Click 'Run Sandbox' to execute live mock pipelines)
+                </span>
               </div>
-            </Card3D>
+              <InteractiveTerminal isDark={isDark} />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
       {/* ── WORK EXPERIENCE SECTION ── */}
       <ExperienceSection experiences={store.experiences} isDark={isDark} />
@@ -1232,7 +1247,7 @@ export default function App() {
             </span>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "3.5rem", flexWrap: "wrap", gap: "1rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "2rem", flexWrap: "wrap", gap: "1rem" }}>
             <div>
               <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(2rem, 4vw, 3.6rem)", fontWeight: 800, lineHeight: 1.08, color: textMain, margin: 0 }}>
                 Things I've <span className="gradient-rose">built</span>
@@ -1241,19 +1256,55 @@ export default function App() {
                 Click any 3D card for deep-dive architecture breakdown and source code.
               </p>
             </div>
-            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#f43f5e", background: "rgba(244, 63, 94, 0.12)", border: "1px solid rgba(244, 63, 94, 0.3)", padding: "0.35rem 0.85rem", borderRadius: "999px", fontWeight: 600 }}>
-              {projects.length} SHOWCASES
-            </span>
+
+            {/* Interactive Category Filter Tabs */}
+            <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap", background: isDark ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)", padding: "4px", borderRadius: "14px", border: `1px solid ${cardBorder}` }}>
+              {["All", "AI / ML", "Full Stack", "Systems", "Desktop"].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    soundManager.playClick();
+                    setProjectFilter(cat);
+                  }}
+                  onMouseEnter={() => soundManager.playHover()}
+                  style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: "0.78rem",
+                    fontWeight: projectFilter === cat ? 800 : 500,
+                    color: projectFilter === cat ? "#ffffff" : textMuted,
+                    background: projectFilter === cat ? "linear-gradient(135deg, #f43f5e 0%, #fb7185 100%)" : "transparent",
+                    border: "none",
+                    borderRadius: "10px",
+                    padding: "0.4rem 0.85rem",
+                    cursor: "pointer",
+                    transition: "all 0.2s ease",
+                    boxShadow: projectFilter === cat ? "0 4px 15px rgba(244, 63, 94, 0.45)" : "none",
+                  }}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))", gap: "2rem" }}>
-            {(projects || []).map((p) => (
+            {((projects || []).filter((p) => {
+              if (projectFilter === "All") return true;
+              if (projectFilter === "AI / ML") return p.tag.includes("AI") || p.tag.includes("ML") || (p.stack || []).some((s) => s.toLowerCase().includes("python") || s.toLowerCase().includes("scikit") || s.toLowerCase().includes("nltk"));
+              if (projectFilter === "Full Stack") return p.tag.includes("Full Stack") || (p.stack || []).some((s) => s.toLowerCase().includes("react") || s.toLowerCase().includes("node") || s.toLowerCase().includes("firebase"));
+              if (projectFilter === "Systems") return p.tag.includes("Systems") || (p.stack || []).some((s) => s.toLowerCase().includes("c++"));
+              if (projectFilter === "Desktop") return p.tag.includes("Desktop") || (p.stack || []).some((s) => s.toLowerCase().includes("java") || s.toLowerCase().includes("swing"));
+              return true;
+            })).map((p) => (
               <Card3D
                 key={p.id}
                 maxTilt={12}
                 accentColor={p.accent || "#6366f1"}
                 isDark={isDark}
-                onClick={() => setSelectedProject(p)}
+                onClick={() => {
+                  soundManager.playClick();
+                  setSelectedProject(p);
+                }}
                 style={{ height: "100%" }}
               >
                 <div
@@ -1386,50 +1437,130 @@ export default function App() {
             </span>
           </div>
 
-          <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(2rem, 4vw, 3.6rem)", fontWeight: 800, lineHeight: 1.08, color: textMain, marginBottom: "3.5rem" }}>
-            Skills & <span className="gradient-purple">Technologies</span>
-          </h2>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "2.5rem", flexWrap: "wrap", gap: "1.5rem" }}>
+            <div>
+              <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(2rem, 4vw, 3.6rem)", fontWeight: 800, lineHeight: 1.08, color: textMain, margin: 0 }}>
+                Skills & <span className="gradient-purple">Technologies</span>
+              </h2>
+              <p style={{ color: textMuted, fontSize: "0.95rem", margin: "0.5rem 0 0 0" }}>
+                Production-tested tools, frameworks, algorithms, and infrastructure systems.
+              </p>
+            </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "2rem" }}>
-            {Object.entries(skills || {}).map(([cat, items]) => (
-              <Card3D key={cat} maxTilt={10} accentColor="#a855f7" isDark={isDark}>
-                <div
-                  style={{
-                    background: cardBg,
-                    backdropFilter: "blur(16px)",
-                    border: `1px solid ${isDark ? "rgba(168, 85, 247, 0.25)" : "rgba(168, 85, 247, 0.2)"}`,
-                    borderRadius: "24px",
-                    padding: "1.75rem",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
+            {/* Skill Live Filter Input */}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", background: isDark ? "rgba(0, 0, 0, 0.4)" : "rgba(0, 0, 0, 0.04)", border: `1px solid ${cardBorder}`, padding: "0.45rem 1rem", borderRadius: "14px", width: "100%", maxWidth: 320 }}>
+              <span style={{ fontSize: "0.9rem", color: isDark ? "#a855f7" : "#7c3aed" }}>🔍</span>
+              <input
+                type="text"
+                value={skillSearch}
+                onChange={(e) => setSkillSearch(e.target.value)}
+                placeholder="Filter tech stack..."
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  outline: "none",
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: "0.85rem",
+                  color: textMain,
+                  width: "100%",
+                }}
+              />
+              {skillSearch && (
+                <button
+                  onClick={() => setSkillSearch("")}
+                  style={{ background: "none", border: "none", color: textMuted, cursor: "pointer", fontSize: "0.75rem" }}
                 >
-                  <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: "#c084fc", letterSpacing: "0.14em", textTransform: "uppercase", fontWeight: 700, marginBottom: "1rem" }}>
-                    {cat}
-                  </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-                    {(Array.isArray(items) ? items : []).map((s) => (
-                      <span
-                        key={s}
-                        style={{
-                          fontFamily: "'JetBrains Mono', monospace",
-                          fontSize: "0.72rem",
-                          color: textMain,
-                          background: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(99, 102, 241, 0.06)",
-                          border: `1px solid ${cardBorder}`,
-                          borderRadius: "8px",
-                          padding: "0.35rem 0.75rem",
-                          transition: "all 0.2s",
-                        }}
-                      >
-                        {s}
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.75rem" }}>
+            {Object.entries(skills || {}).map(([cat, items], idx) => {
+              const categoryColors = ["#10b981", "#06b6d4", "#6366f1", "#a855f7", "#f59e0b", "#f43f5e"];
+              const categoryIcons: Record<string, string> = {
+                languages: "💻",
+                frontend: "🌐",
+                backend: "🗄️",
+                "ai/ml": "🧠",
+                tools: "🛠️",
+                databases: "⚡",
+              };
+              const accent = categoryColors[idx % categoryColors.length];
+              const icon = categoryIcons[cat.toLowerCase()] || "⚡";
+
+              const filteredItems = (Array.isArray(items) ? items : []).filter((s) =>
+                s.toLowerCase().includes(skillSearch.toLowerCase())
+              );
+
+              if (skillSearch && filteredItems.length === 0) return null;
+
+              return (
+                <Card3D key={cat} maxTilt={10} accentColor={accent} isDark={isDark}>
+                  <div
+                    style={{
+                      background: cardBg,
+                      backdropFilter: "blur(20px)",
+                      border: `1px solid ${accent}33`,
+                      borderRadius: "24px",
+                      padding: "1.75rem",
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      boxShadow: isDark ? `0 15px 40px rgba(0, 0, 0, 0.6), 0 0 20px ${accent}15` : "0 10px 30px rgba(99, 102, 241, 0.08)",
+                      transition: "border-color 0.3s ease",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <span style={{ fontSize: "1.1rem" }}>{icon}</span>
+                        <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.95rem", color: textMain, fontWeight: 800, margin: 0 }}>
+                          {cat}
+                        </p>
+                      </div>
+                      <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.62rem", color: accent, background: `${accent}18`, border: `1px solid ${accent}33`, padding: "0.15rem 0.5rem", borderRadius: "6px", fontWeight: 700 }}>
+                        {filteredItems.length} skills
                       </span>
-                    ))}
+                    </div>
+
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                      {filteredItems.map((s) => (
+                        <span
+                          key={s}
+                          onMouseEnter={() => soundManager.playHover()}
+                          style={{
+                            fontFamily: "'JetBrains Mono', monospace",
+                            fontSize: "0.72rem",
+                            color: isDark ? "#ffffff" : "#0f172a",
+                            background: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(99, 102, 241, 0.05)",
+                            border: `1px solid ${cardBorder}`,
+                            borderRadius: "8px",
+                            padding: "0.35rem 0.75rem",
+                            transition: "all 0.2s ease",
+                            cursor: "default",
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = accent;
+                            e.currentTarget.style.background = `${accent}22`;
+                            e.currentTarget.style.color = accent;
+                            e.currentTarget.style.transform = "translateY(-2px)";
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = cardBorder;
+                            e.currentTarget.style.background = isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(99, 102, 241, 0.05)";
+                            e.currentTarget.style.color = isDark ? "#ffffff" : "#0f172a";
+                            e.currentTarget.style.transform = "translateY(0)";
+                          }}
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </Card3D>
-            ))}
+                </Card3D>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -1624,9 +1755,11 @@ export default function App() {
                 Open to software engineering internships, AI/ML projects, and full-time roles. I respond rapidly.
               </p>
 
-              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
                 <a
                   href={`mailto:${personalInfo.email}`}
+                  onClick={() => soundManager.playClick()}
+                  onMouseEnter={() => soundManager.playHover()}
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     fontSize: "0.9rem",
@@ -1640,14 +1773,51 @@ export default function App() {
                     padding: "1rem 2.25rem",
                     textDecoration: "none",
                     boxShadow: "0 8px 25px rgba(99, 102, 241, 0.4)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
                   }}
                 >
-                  {personalInfo.email} ↗
+                  <span>✉️</span> {personalInfo.email} ↗
                 </a>
+
+                {/* One-Click Copy Email Button */}
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(personalInfo.email);
+                    setEmailCopied(true);
+                    soundManager.playSuccess();
+                    setTimeout(() => setEmailCopied(false), 2400);
+                  }}
+                  onMouseEnter={() => soundManager.playHover()}
+                  style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: "0.88rem",
+                    fontWeight: 700,
+                    background: emailCopied
+                      ? (isDark ? "rgba(16, 185, 129, 0.25)" : "rgba(16, 185, 129, 0.15)")
+                      : (isDark ? "rgba(255, 255, 255, 0.06)" : "#ffffff"),
+                    color: emailCopied ? (isDark ? "#34d399" : "#059669") : textMain,
+                    border: `1px solid ${emailCopied ? (isDark ? "#34d399" : "#059669") : cardBorder}`,
+                    borderRadius: "14px",
+                    padding: "0.95rem 1.6rem",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.45rem",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  <span>{emailCopied ? "✓" : "📋"}</span>
+                  <span>{emailCopied ? "Email Copied!" : "Copy Email"}</span>
+                </button>
+
                 <a
                   href={personalInfo.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => soundManager.playClick()}
+                  onMouseEnter={() => soundManager.playHover()}
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     fontSize: "0.9rem",
@@ -1668,6 +1838,8 @@ export default function App() {
                   href={personalInfo.github}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => soundManager.playClick()}
+                  onMouseEnter={() => soundManager.playHover()}
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     fontSize: "0.9rem",
