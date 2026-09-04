@@ -20,18 +20,19 @@ export default function ParticleCanvas({ isDark = true }: { isDark?: boolean }) 
     };
     window.addEventListener("resize", handleResize);
 
-    const mouse = { x: width / 2, y: height / 2, radius: 140 };
+    const mouse = { x: width / 2, y: height / 2, targetX: width / 2, targetY: height / 2, radius: 160 };
     const handleMouseMove = (e: MouseEvent) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
+      mouse.targetX = e.clientX;
+      mouse.targetY = e.clientY;
     };
     window.addEventListener("mousemove", handleMouseMove);
 
-    // Particles
-    const particleCount = Math.min(Math.floor((width * height) / 14000), 75);
+    // Multilayer depth particles
+    const particleCount = Math.min(Math.floor((width * height) / 12000), 85);
     const particles: Array<{
       x: number;
       y: number;
+      z: number; // depth: 1 = far, 3 = close
       vx: number;
       vy: number;
       size: number;
@@ -39,62 +40,88 @@ export default function ParticleCanvas({ isDark = true }: { isDark?: boolean }) 
       alpha: number;
     }> = [];
 
-    const darkColors = ["#8b5cf6", "#06b6d4", "#ec4899", "#3b82f6", "#10b981"];
-    const lightColors = ["#6366f1", "#0284c7", "#db2777", "#2563eb", "#059669"];
+    const darkColors = ["#818cf8", "#06b6d4", "#c084fc", "#38bdf8", "#10b981", "#fb7185"];
+    const lightColors = ["#6366f1", "#0284c7", "#9333ea", "#2563eb", "#059669", "#e11d48"];
     const colors = isDark ? darkColors : lightColors;
 
     for (let i = 0; i < particleCount; i++) {
+      const z = Math.random() * 2 + 1;
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6,
-        size: Math.random() * 2 + 1,
+        z,
+        vx: (Math.random() - 0.5) * (0.35 * z),
+        vy: (Math.random() - 0.5) * (0.35 * z),
+        size: (Math.random() * 1.8 + 0.8) * (z * 0.75),
         color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.5 + (isDark ? 0.2 : 0.35),
+        alpha: (Math.random() * 0.4 + 0.2) * (z / 3),
       });
     }
 
+    let time = 0;
+
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
+      time += 0.01;
 
-      // Draw connections
+      // Mouse smoothing
+      mouse.x += (mouse.targetX - mouse.x) * 0.08;
+      mouse.y += (mouse.targetY - mouse.y) * 0.08;
+
+      // ── Realistic 3D Horizon Grid (Subtle) ──
+      const gridY = height * 0.65;
+      ctx.save();
+      ctx.strokeStyle = isDark ? "rgba(99, 102, 241, 0.04)" : "rgba(99, 102, 241, 0.05)";
+      ctx.lineWidth = 0.75;
+
+      // Perspective horizon lines
+      for (let i = 0; i < 8; i++) {
+        const y = gridY + Math.pow(i / 7, 2.2) * (height - gridY);
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // ── Particle Connections ──
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 110) {
+          if (dist < 115) {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
+            const lineAlpha = (1 - dist / 115) * 0.18 * ((particles[i].z + particles[j].z) / 4);
             ctx.strokeStyle = isDark
-              ? `rgba(139, 92, 246, ${0.15 * (1 - dist / 110)})`
-              : `rgba(99, 102, 241, ${0.2 * (1 - dist / 110)})`;
-            ctx.lineWidth = 0.8;
+              ? `rgba(129, 140, 248, ${lineAlpha})`
+              : `rgba(99, 102, 241, ${lineAlpha * 1.2})`;
+            ctx.lineWidth = 0.65;
             ctx.stroke();
           }
         }
       }
 
-      // Update and draw particles
+      // ── Update & Draw Particles ──
       particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x += p.vx + Math.sin(time + p.y * 0.01) * 0.15;
+        p.y += p.vy + Math.cos(time + p.x * 0.01) * 0.15;
 
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
+        if (p.x < -10) p.x = width + 10;
+        if (p.x > width + 10) p.x = -10;
+        if (p.y < -10) p.y = height + 10;
+        if (p.y > height + 10) p.y = -10;
 
         const dx = mouse.x - p.x;
         const dy = mouse.y - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist < mouse.radius) {
           const force = (mouse.radius - dist) / mouse.radius;
-          p.x -= (dx / dist) * force * 1.5;
-          p.y -= (dy / dist) * force * 1.5;
+          p.x -= (dx / dist) * force * (2.2 * p.z);
+          p.y -= (dy / dist) * force * (2.2 * p.z);
         }
 
         ctx.beginPath();
@@ -125,7 +152,7 @@ export default function ParticleCanvas({ isDark = true }: { isDark?: boolean }) 
         inset: 0,
         pointerEvents: "none",
         zIndex: 0,
-        opacity: isDark ? 0.6 : 0.8,
+        opacity: isDark ? 0.75 : 0.85,
       }}
     />
   );

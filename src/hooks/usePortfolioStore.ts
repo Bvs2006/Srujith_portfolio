@@ -26,6 +26,21 @@ export interface CertItem {
   credentialUrl?: string;
 }
 
+export interface ExperienceItem {
+  id: string;
+  role: string;
+  company: string;
+  location: string;
+  period: string;
+  status: "Completed" | "Current" | "Upcoming";
+  type: string;
+  accent: string;
+  badge?: string;
+  certificateUrl?: string;
+  highlights: string[];
+  skills: string[];
+}
+
 export interface CompetitiveStats {
   totalSolved: number;
   leetcode: {
@@ -90,9 +105,9 @@ export const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   title: "AI & ML Engineer · Full-Stack Developer",
   tagline: "Building at the intersection of intelligent algorithms and scalable software — specializing in AI/ML, competitive programming, and modern full-stack systems.",
   bio1: "I'm Srujith — a B.Tech AI & ML student at Aditya University (CGPA 8.87) passionate about machine learning, competitive algorithms, and engineering resilient digital products.",
-  bio2: "674+ competitive programming problems solved across six platforms (360 LeetCode, 208 CodeChef, 58 GFG, 48 HackerRank), supervised ML models with scikit-learn, and full-stack apps in React, Java, C++, and Python.",
+  bio2: "678+ competitive programming problems solved across six platforms (364 LeetCode, 208 CodeChef, 58 GFG, 48 HackerRank), supervised ML models with scikit-learn, and full-stack apps in React, Java, C++, and Python.",
   cgpa: "8.87",
-  problemsCount: "674",
+  problemsCount: "678",
   projectsCount: "6",
   university: "Aditya University, Surampalem",
   degree: "B.Tech · AI & ML · 2024–Present",
@@ -109,15 +124,37 @@ export const DEFAULT_PERSONAL_INFO: PersonalInfo = {
   resumeUrl: "https://drive.google.com/file/d/1_ExampleResumeLink/view?usp=sharing",
 };
 
+export const DEFAULT_EXPERIENCES: ExperienceItem[] = [
+  {
+    id: "exp-1",
+    role: "Full Stack Development Intern",
+    company: "Technical Hub Private Limited",
+    location: "Andhra Pradesh, India (On-site)",
+    period: "May 2026 – Jun 2026",
+    status: "Completed",
+    type: "Internship",
+    accent: "#6366f1",
+    badge: "Certificate",
+    certificateUrl: "https://drive.google.com/file/d/1_TechnicalHubCert/view?usp=sharing",
+    highlights: [
+      "Developed and maintained full-stack web applications using Next.js, TypeScript, and PostgreSQL in a real-time professional environment.",
+      "Collaborated with mentors and senior developers to deliver production-ready features and UI components using Agile workflows.",
+      "Applied Git/GitHub for version control, code reviews, and collaborative software development practices.",
+      "Integrated AI-powered APIs and tools (Claude, Gemini) into web applications to enhance user experience and developer productivity.",
+    ],
+    skills: ["Next.js", "TypeScript", "PostgreSQL", "Claude API", "Gemini API", "Agile", "Git & GitHub", "REST APIs"],
+  },
+];
+
 export const DEFAULT_COMPETITIVE_STATS: CompetitiveStats = {
-  totalSolved: 674,
+  totalSolved: 678,
   leetcode: {
     handle: "srujithcoder",
-    solved: 360,
-    rating: 1451,
-    ranking: 376165,
-    easy: 228,
-    medium: 128,
+    solved: 364,
+    rating: 1412,
+    ranking: 372561,
+    easy: 231,
+    medium: 129,
     hard: 4,
   },
   codechef: {
@@ -295,9 +332,9 @@ export const DEFAULT_CERTS: CertItem[] = [
 
 export const DEFAULT_SKILLS: Record<string, string[]> = {
   Languages: ["C++ (OOP & STL)", "Java", "Python", "SQL", "TypeScript", "JavaScript"],
-  Frontend: ["React.js", "Tailwind CSS", "HTML5", "CSS3", "Vite"],
-  Databases: ["MongoDB", "MySQL", "Oracle SQL", "Firebase Firestore"],
-  "AI / ML": ["scikit-learn", "NLTK", "TF-IDF", "NumPy", "Pandas", "Feature Engineering"],
+  Frontend: ["React.js", "Next.js", "Tailwind CSS", "HTML5", "CSS3", "Vite"],
+  Databases: ["PostgreSQL", "MongoDB", "MySQL", "Oracle SQL", "Firebase Firestore"],
+  "AI / ML": ["scikit-learn", "Claude API", "Gemini API", "NLTK", "TF-IDF", "NumPy", "Pandas"],
   Tools: ["Git & GitHub", "MS Excel", "Java Swing", "JDBC", "REST APIs", "VS Code"],
   "CS Core": ["DSA", "Algorithms", "OOP", "OS Concepts", "System Design Basics"],
 };
@@ -305,6 +342,7 @@ export const DEFAULT_SKILLS: Record<string, string[]> = {
 export const STORAGE_KEYS = {
   PERSONAL: "personal_info",
   PROJECTS: "projects_data",
+  EXPERIENCES: "experience_data",
   CERTS: "certs_data",
   SKILLS: "skills_data",
   COMPETITIVE: "competitive_data",
@@ -313,6 +351,7 @@ export const STORAGE_KEYS = {
 export interface PortfolioState {
   personalInfo: PersonalInfo;
   projects: ProjectItem[];
+  experiences: ExperienceItem[];
   certs: CertItem[];
   skills: Record<string, string[]>;
   competitiveStats: CompetitiveStats;
@@ -344,6 +383,7 @@ function writeLocal<T>(key: string, val: T): void {
 let globalState: PortfolioState = {
   personalInfo: readLocal(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO),
   projects: readLocal(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS),
+  experiences: readLocal(STORAGE_KEYS.EXPERIENCES, DEFAULT_EXPERIENCES),
   certs: readLocal(STORAGE_KEYS.CERTS, DEFAULT_CERTS),
   skills: readLocal(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS),
   competitiveStats: readLocal(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS),
@@ -370,11 +410,12 @@ function initCloudSync() {
   Promise.all([
     getFromSupabase(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO),
     getFromSupabase(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS),
+    getFromSupabase(STORAGE_KEYS.EXPERIENCES, DEFAULT_EXPERIENCES),
     getFromSupabase(STORAGE_KEYS.CERTS, DEFAULT_CERTS),
     getFromSupabase(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS),
     getFromSupabase(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS),
   ])
-    .then(([cloudPersonal, cloudProjects, cloudCerts, cloudSkills, cloudCompetitive]) => {
+    .then(([cloudPersonal, cloudProjects, cloudExperiences, cloudCerts, cloudSkills, cloudCompetitive]) => {
       const updated: Partial<PortfolioState> = {};
       if (cloudPersonal) {
         updated.personalInfo = { ...DEFAULT_PERSONAL_INFO, ...cloudPersonal };
@@ -383,6 +424,10 @@ function initCloudSync() {
       if (cloudProjects && Array.isArray(cloudProjects)) {
         updated.projects = cloudProjects;
         writeLocal(STORAGE_KEYS.PROJECTS, cloudProjects);
+      }
+      if (cloudExperiences && Array.isArray(cloudExperiences)) {
+        updated.experiences = cloudExperiences;
+        writeLocal(STORAGE_KEYS.EXPERIENCES, cloudExperiences);
       }
       if (cloudCerts && Array.isArray(cloudCerts)) {
         updated.certs = cloudCerts;
@@ -417,6 +462,9 @@ function initCloudSync() {
             } else if (row.key === STORAGE_KEYS.PROJECTS && Array.isArray(row.data)) {
               updated.projects = row.data as ProjectItem[];
               writeLocal(STORAGE_KEYS.PROJECTS, updated.projects);
+            } else if (row.key === STORAGE_KEYS.EXPERIENCES && Array.isArray(row.data)) {
+              updated.experiences = row.data as ExperienceItem[];
+              writeLocal(STORAGE_KEYS.EXPERIENCES, updated.experiences);
             } else if (row.key === STORAGE_KEYS.CERTS && Array.isArray(row.data)) {
               updated.certs = row.data as CertItem[];
               writeLocal(STORAGE_KEYS.CERTS, updated.certs);
@@ -437,7 +485,6 @@ function initCloudSync() {
   }
 }
 
-// Subscribe helper for useSyncExternalStore
 function subscribe(listener: () => void) {
   listeners.add(listener);
   initCloudSync();
@@ -492,6 +539,31 @@ export function usePortfolioStore() {
     saveToSupabase(STORAGE_KEYS.PROJECTS, next);
   };
 
+  const addExperience = (exp: Omit<ExperienceItem, "id">) => {
+    const newExp: ExperienceItem = {
+      ...exp,
+      id: `exp-${Date.now()}`,
+    };
+    const next = [newExp, ...(state.experiences || [])];
+    writeLocal(STORAGE_KEYS.EXPERIENCES, next);
+    updateGlobalState({ experiences: next });
+    saveToSupabase(STORAGE_KEYS.EXPERIENCES, next);
+  };
+
+  const updateExperience = (id: string, exp: Partial<ExperienceItem>) => {
+    const next = (state.experiences || []).map((e) => (e.id === id ? { ...e, ...exp } : e));
+    writeLocal(STORAGE_KEYS.EXPERIENCES, next);
+    updateGlobalState({ experiences: next });
+    saveToSupabase(STORAGE_KEYS.EXPERIENCES, next);
+  };
+
+  const deleteExperience = (id: string) => {
+    const next = (state.experiences || []).filter((e) => e.id !== id);
+    writeLocal(STORAGE_KEYS.EXPERIENCES, next);
+    updateGlobalState({ experiences: next });
+    saveToSupabase(STORAGE_KEYS.EXPERIENCES, next);
+  };
+
   const addCert = (cert: Omit<CertItem, "id">) => {
     const newCert: CertItem = {
       ...cert,
@@ -536,18 +608,21 @@ export function usePortfolioStore() {
     const resetState: PortfolioState = {
       personalInfo: DEFAULT_PERSONAL_INFO,
       projects: DEFAULT_PROJECTS,
+      experiences: DEFAULT_EXPERIENCES,
       certs: DEFAULT_CERTS,
       skills: DEFAULT_SKILLS,
       competitiveStats: DEFAULT_COMPETITIVE_STATS,
     };
     writeLocal(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO);
     writeLocal(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS);
+    writeLocal(STORAGE_KEYS.EXPERIENCES, DEFAULT_EXPERIENCES);
     writeLocal(STORAGE_KEYS.CERTS, DEFAULT_CERTS);
     writeLocal(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS);
     writeLocal(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS);
     updateGlobalState(resetState);
     saveToSupabase(STORAGE_KEYS.PERSONAL, DEFAULT_PERSONAL_INFO);
     saveToSupabase(STORAGE_KEYS.PROJECTS, DEFAULT_PROJECTS);
+    saveToSupabase(STORAGE_KEYS.EXPERIENCES, DEFAULT_EXPERIENCES);
     saveToSupabase(STORAGE_KEYS.CERTS, DEFAULT_CERTS);
     saveToSupabase(STORAGE_KEYS.SKILLS, DEFAULT_SKILLS);
     saveToSupabase(STORAGE_KEYS.COMPETITIVE, DEFAULT_COMPETITIVE_STATS);
@@ -558,6 +633,7 @@ export function usePortfolioStore() {
       {
         personalInfo: state.personalInfo,
         projects: state.projects,
+        experiences: state.experiences,
         certs: state.certs,
         skills: state.skills,
         competitiveStats: state.competitiveStats,
@@ -581,6 +657,11 @@ export function usePortfolioStore() {
         updated.projects = data.projects;
         writeLocal(STORAGE_KEYS.PROJECTS, data.projects);
         saveToSupabase(STORAGE_KEYS.PROJECTS, data.projects);
+      }
+      if (data.experiences && Array.isArray(data.experiences)) {
+        updated.experiences = data.experiences;
+        writeLocal(STORAGE_KEYS.EXPERIENCES, data.experiences);
+        saveToSupabase(STORAGE_KEYS.EXPERIENCES, data.experiences);
       }
       if (data.certs && Array.isArray(data.certs)) {
         updated.certs = data.certs;
@@ -611,6 +692,9 @@ export function usePortfolioStore() {
     addProject,
     updateProject,
     deleteProject,
+    addExperience,
+    updateExperience,
+    deleteExperience,
     addCert,
     updateCert,
     deleteCert,

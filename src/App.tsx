@@ -7,12 +7,17 @@ import ThemeToggle from "./components/ThemeToggle";
 import LiveProfiles from "./components/LiveProfiles";
 import AdminDashboard from "./components/AdminDashboard";
 import AdminAuthModal from "./components/AdminAuthModal";
+import HeroHUD from "./components/HeroHUD";
+import NeuralGlobe3D from "./components/NeuralGlobe3D";
+import HoloCard from "./components/HoloCard";
+import ExperienceSection from "./components/ExperienceSection";
 import { usePortfolioStore, ProjectItem, CertItem } from "./hooks/usePortfolioStore";
 import { useTheme } from "./hooks/useTheme";
 
 // ── Navigation Items ──────────────────────────────────────────────────────────
 const NAV = [
   { id: "about", label: "About" },
+  { id: "experience", label: "Experience" },
   { id: "projects", label: "Projects" },
   { id: "skills", label: "Skills" },
   { id: "certifications", label: "Certifications" },
@@ -822,7 +827,7 @@ export default function App() {
 
           {/* 3D Levitating Profile Console */}
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <Card3D maxTilt={18} accentColor="#6366f1" isDark={isDark} style={{ maxWidth: 460, width: "100%" }}>
+            <Card3D maxTilt={16} accentColor="#6366f1" isDark={isDark} style={{ maxWidth: 460, width: "100%" }}>
               <div
                 style={{
                   background: cardBg,
@@ -914,7 +919,7 @@ export default function App() {
                   </div>
                   <div style={{ background: isDark ? "rgba(255, 255, 255, 0.04)" : "rgba(99, 102, 241, 0.05)", borderRadius: "14px", padding: "0.85rem", border: `1px solid ${cardBorder}` }}>
                     <p style={{ fontSize: "0.62rem", fontFamily: "'JetBrains Mono', monospace", color: textMuted, margin: 0, textTransform: "uppercase" }}>Certifications</p>
-                    <p style={{ fontSize: "0.9rem", fontWeight: 800, color: "#38bdf8", margin: "4px 0 0 0", fontFamily: "'Outfit', sans-serif" }}>{certs.length} Credentials</p>
+                    <p style={{ fontSize: "0.9rem", fontWeight: 800, color: "#38bdf8", margin: "4px 0 0 0", fontFamily: "'Outfit', sans-serif" }}>{(certs || []).length} Credentials</p>
                   </div>
                 </div>
               </div>
@@ -1020,12 +1025,15 @@ export default function App() {
         </div>
       </section>
 
+      {/* ── WORK EXPERIENCE SECTION ── */}
+      <ExperienceSection experiences={store.experiences} isDark={isDark} />
+
       {/* ── PROJECTS SECTION ── */}
       <section id="projects" style={{ padding: "6rem clamp(1.5rem, 5vw, 6rem)", position: "relative", zIndex: 10 }}>
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#f43f5e", letterSpacing: "0.2em", fontWeight: 700 }}>
-              02
+              03
             </span>
             <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, rgba(244, 63, 94, 0.5), transparent)" }} />
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: textMuted, letterSpacing: "0.16em", textTransform: "uppercase" }}>
@@ -1047,11 +1055,11 @@ export default function App() {
             </span>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))", gap: "2rem" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))", gap: "2rem" }}>
             {(projects || []).map((p) => (
               <Card3D
                 key={p.id}
-                maxTilt={14}
+                maxTilt={12}
                 accentColor={p.accent || "#6366f1"}
                 isDark={isDark}
                 onClick={() => setSelectedProject(p)}
@@ -1060,56 +1068,89 @@ export default function App() {
                 <div
                   style={{
                     background: cardBg,
-                    backdropFilter: "blur(20px)",
-                    WebkitBackdropFilter: "blur(20px)",
+                    backdropFilter: "blur(24px)",
+                    WebkitBackdropFilter: "blur(24px)",
                     border: `1px solid ${p.accent || "#6366f1"}33`,
-                    borderRadius: "24px",
+                    borderRadius: "26px",
                     overflow: "hidden",
                     display: "flex",
                     flexDirection: "column",
                     height: "100%",
-                    boxShadow: isDark ? "0 15px 45px rgba(0, 0, 0, 0.5)" : "0 15px 45px rgba(99, 102, 241, 0.08)",
+                    boxShadow: isDark ? "0 20px 50px rgba(0, 0, 0, 0.6)" : "0 15px 40px rgba(99, 102, 241, 0.08)",
                     transformStyle: "preserve-3d",
                   }}
                 >
-                  <div style={{ position: "relative", height: "190px", overflow: "hidden", background: "#111022" }}>
+                  {/* Realistic Browser Window Bar */}
+                  <div
+                    style={{
+                      background: isDark ? "rgba(0, 0, 0, 0.45)" : "rgba(241, 245, 249, 0.9)",
+                      padding: "0.65rem 1rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      borderBottom: `1px solid ${isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.06)"}`,
+                    }}
+                  >
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#ef4444" }} />
+                      <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#f59e0b" }} />
+                      <span style={{ width: 9, height: 9, borderRadius: "50%", background: "#10b981" }} />
+                    </div>
+                    <div
+                      style={{
+                        background: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.04)",
+                        borderRadius: "999px",
+                        padding: "0.15rem 0.75rem",
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: "0.6rem",
+                        color: textMuted,
+                        border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)"}`,
+                      }}
+                    >
+                      bvs://work/{p.id}
+                    </div>
+                    <span style={{ fontSize: "0.75rem", color: p.accent || "#6366f1", fontWeight: 700 }}>↗</span>
+                  </div>
+
+                  {/* Image with subtle gradient overlay */}
+                  <div style={{ position: "relative", height: "185px", overflow: "hidden", background: "#111022" }}>
                     <img
                       src={p.img}
                       alt={p.alt || p.name}
                       loading="lazy"
-                      style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.08)")}
+                      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
                     />
-                    <div style={{ position: "absolute", inset: 0, background: isDark ? "linear-gradient(to bottom, transparent 30%, rgba(15, 14, 28, 0.95) 100%)" : "linear-gradient(to bottom, transparent 30%, rgba(255, 255, 255, 0.95) 100%)" }} />
+                    <div style={{ position: "absolute", inset: 0, background: isDark ? "linear-gradient(to bottom, transparent 35%, rgba(15, 14, 28, 0.95) 100%)" : "linear-gradient(to bottom, transparent 35%, rgba(255, 255, 255, 0.95) 100%)" }} />
                     <span
                       style={{
                         position: "absolute",
-                        top: "0.85rem",
+                        bottom: "0.85rem",
                         left: "0.85rem",
                         fontFamily: "'JetBrains Mono', monospace",
                         fontSize: "0.62rem",
                         color: p.accent || "#6366f1",
-                        background: isDark ? "rgba(15, 14, 28, 0.9)" : "rgba(255, 255, 255, 0.9)",
+                        background: isDark ? "rgba(15, 14, 28, 0.92)" : "rgba(255, 255, 255, 0.92)",
                         border: `1px solid ${p.accent || "#6366f1"}55`,
-                        borderRadius: "6px",
-                        padding: "0.25rem 0.65rem",
+                        borderRadius: "8px",
+                        padding: "0.25rem 0.75rem",
                         letterSpacing: "0.08em",
                         textTransform: "uppercase",
-                        fontWeight: 600,
+                        fontWeight: 700,
+                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
                       }}
                     >
                       {p.tag}
                     </span>
-                    <span style={{ position: "absolute", top: "0.85rem", right: "0.85rem", color: p.accent || "#6366f1", fontSize: "1.1rem" }}>
-                      ↗
-                    </span>
                   </div>
 
-                  <div style={{ padding: "1.6rem", display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between" }}>
+                  <div style={{ padding: "1.6rem", display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between", gap: "1rem" }}>
                     <div>
-                      <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.4rem", fontWeight: 800, color: textMain, margin: "0 0 0.6rem 0" }}>
+                      <h3 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.35rem", fontWeight: 800, color: textMain, margin: "0 0 0.5rem 0", letterSpacing: "-0.01em" }}>
                         {p.name}
                       </h3>
-                      <p style={{ color: textMuted, fontSize: "0.88rem", lineHeight: 1.6, margin: "0 0 1.25rem 0" }}>
+                      <p style={{ color: textMuted, fontSize: "0.88rem", lineHeight: 1.6, margin: 0 }}>
                         {p.desc}
                       </p>
                     </div>
@@ -1126,6 +1167,7 @@ export default function App() {
                             border: `1px solid ${cardBorder}`,
                             borderRadius: "6px",
                             padding: "0.22rem 0.55rem",
+                            fontWeight: 500,
                           }}
                         >
                           {s}
@@ -1145,7 +1187,7 @@ export default function App() {
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#a855f7", letterSpacing: "0.2em", fontWeight: 700 }}>
-              03
+              04
             </span>
             <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, rgba(168, 85, 247, 0.5), transparent)" }} />
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: textMuted, letterSpacing: "0.16em", textTransform: "uppercase" }}>
@@ -1206,7 +1248,7 @@ export default function App() {
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#f59e0b", letterSpacing: "0.2em", fontWeight: 700 }}>
-              04
+              05
             </span>
             <div style={{ flex: 1, height: "1px", background: "linear-gradient(to right, rgba(245, 158, 11, 0.5), transparent)" }} />
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: textMuted, letterSpacing: "0.16em", textTransform: "uppercase" }}>
@@ -1230,10 +1272,9 @@ export default function App() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))", gap: "1.5rem" }}>
             {(certs || []).map((cert) => (
-              <Card3D
+              <HoloCard
                 key={cert.id || cert.name}
-                maxTilt={12}
-                accentColor={cert.color || "#f59e0b"}
+                color={cert.color || "#f59e0b"}
                 isDark={isDark}
                 onClick={() => setSelectedCert(cert)}
                 style={{ height: "100%" }}
@@ -1241,7 +1282,7 @@ export default function App() {
                 <div
                   style={{
                     background: cardBg,
-                    backdropFilter: "blur(20px)",
+                    backdropFilter: "blur(24px)",
                     border: `1px solid ${cert.color}44`,
                     borderRadius: "24px",
                     padding: "1.6rem",
@@ -1249,7 +1290,6 @@ export default function App() {
                     flexDirection: "column",
                     justifyContent: "space-between",
                     gap: "1.25rem",
-                    boxShadow: isDark ? "0 15px 40px rgba(0, 0, 0, 0.5)" : "0 15px 40px rgba(99, 102, 241, 0.08)",
                     height: "100%",
                   }}
                 >
@@ -1266,6 +1306,7 @@ export default function App() {
                         justifyContent: "center",
                         fontSize: "1.6rem",
                         flexShrink: 0,
+                        boxShadow: `0 0 15px ${cert.color}33`,
                       }}
                     >
                       {cert.icon}
@@ -1327,6 +1368,7 @@ export default function App() {
                           alignItems: "center",
                           gap: "4px",
                           transition: "all 0.2s",
+                          boxShadow: `0 4px 15px ${cert.color}44`,
                         }}
                       >
                         <span>📄</span> View ↗
@@ -1334,7 +1376,7 @@ export default function App() {
                     )}
                   </div>
                 </div>
-              </Card3D>
+              </HoloCard>
             ))}
           </div>
         </div>

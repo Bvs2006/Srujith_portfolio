@@ -50,17 +50,17 @@ export interface LiveHackerRankData {
 
 // ── Baseline Verified Profiles ────────────────────────────────────────────────
 const INITIAL_LEETCODE: LiveLeetCodeData = {
-  totalSolved: 360,
+  totalSolved: 364,
   totalQuestions: 3330,
-  easySolved: 228,
+  easySolved: 231,
   totalEasy: 830,
-  mediumSolved: 128,
+  mediumSolved: 129,
   totalMedium: 1740,
   hardSolved: 4,
   totalHard: 760,
-  ranking: 376165,
-  rating: 1451,
-  attendedContests: 13,
+  ranking: 372561,
+  rating: 1412,
+  attendedContests: 14,
   streak: 6,
   activeDays: 125,
   topLanguage: "C++ (248) · C (115)",
@@ -72,8 +72,8 @@ const INITIAL_GITHUB: LiveGitHubData = {
   name: "Venkata Srujith Bellamkonda",
   avatar_url: "https://github.com/Bvs2006.png",
   html_url: "https://github.com/Bvs2006",
-  public_repos: 8,
-  followers: 12,
+  public_repos: 30,
+  followers: 14,
   following: 15,
   bio: "AI & ML Engineer · Full-Stack & Systems Developer",
   totalStars: 15,
@@ -125,7 +125,7 @@ export const VERIFIED_REPOS = [
   },
 ];
 
-// ── Hook: LeetCode Direct Live GraphQL ─────────────────────────────────────────
+// ── Hook: LeetCode Direct Live GraphQL & REST ──────────────────────────────────
 export function useLeetCodeStats(username: string = "srujithcoder") {
   const [data, setData] = useState<LiveLeetCodeData>(INITIAL_LEETCODE);
   const [status, setStatus] = useState<FetchStatus>("loading");
@@ -133,6 +133,37 @@ export function useLeetCodeStats(username: string = "srujithcoder") {
   const fetchLiveLeetCode = useCallback(async () => {
     setStatus("loading");
 
+    // Method 1: Fast Alfa REST API (Live Verified)
+    try {
+      const [profileRes, contestRes] = await Promise.all([
+        fetch(`https://alfa-leetcode-api.onrender.com/userProfile/${username}`),
+        fetch(`https://alfa-leetcode-api.onrender.com/${username}/contest`).catch(() => null),
+      ]);
+
+      if (profileRes.ok) {
+        const json = await profileRes.json();
+        const contest = contestRes && contestRes.ok ? await contestRes.json() : null;
+
+        if (json?.totalSolved || json?.totalSolved === 0) {
+          setData((prev) => ({
+            ...prev,
+            totalSolved: json.totalSolved ?? prev.totalSolved,
+            easySolved: json.easySolved ?? prev.easySolved,
+            mediumSolved: json.mediumSolved ?? prev.mediumSolved,
+            hardSolved: json.hardSolved ?? prev.hardSolved,
+            ranking: json.ranking ?? prev.ranking,
+            rating: contest?.contestRating ? Math.round(contest.contestRating) : prev.rating,
+            attendedContests: contest?.contestAttend ?? prev.attendedContests,
+          }));
+          setStatus("live");
+          return;
+        }
+      }
+    } catch {
+      // try fallback
+    }
+
+    // Method 2: Direct GraphQL Proxy
     const query = JSON.stringify({
       query: `
         query getFullLeetCodeProfile($username: String!) {
@@ -154,35 +185,28 @@ export function useLeetCodeStats(username: string = "srujithcoder") {
       variables: { username }
     });
 
-    // Try direct GraphQL first, then CORS proxy fallbacks
-    const fetchMethods = [
-      () => fetch("https://leetcode.com/graphql", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Referer": "https://leetcode.com" },
-        body: query
-      }),
-      () => fetch("https://corsproxy.io/?url=" + encodeURIComponent("https://leetcode.com/graphql"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: query
-      }),
-      () => fetch(`https://alfa-leetcode-api.onrender.com/userProfile/${username}`),
+    const fallbackUrls = [
+      "https://corsproxy.io/?url=" + encodeURIComponent("https://leetcode.com/graphql"),
+      "https://leetcode.com/graphql",
     ];
 
-    for (const fetchCall of fetchMethods) {
+    for (const url of fallbackUrls) {
       try {
-        const res = await fetchCall();
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: query,
+        });
         if (res.ok) {
           const json = await res.json();
-          // Direct GraphQL response format
           if (json?.data?.matchedUser) {
             const user = json.data.matchedUser;
             const contest = json.data.userContestRanking;
             const subs = user.submitStats?.acSubmissionNum || [];
 
-            const allCount = subs.find((s: { difficulty: string }) => s.difficulty === "All")?.count || 360;
-            const easyCount = subs.find((s: { difficulty: string }) => s.difficulty === "Easy")?.count || 228;
-            const medCount = subs.find((s: { difficulty: string }) => s.difficulty === "Medium")?.count || 128;
+            const allCount = subs.find((s: { difficulty: string }) => s.difficulty === "All")?.count || 364;
+            const easyCount = subs.find((s: { difficulty: string }) => s.difficulty === "Easy")?.count || 231;
+            const medCount = subs.find((s: { difficulty: string }) => s.difficulty === "Medium")?.count || 129;
             const hardCount = subs.find((s: { difficulty: string }) => s.difficulty === "Hard")?.count || 4;
 
             const langStr = (user.languageProblemCount || [])
@@ -199,9 +223,9 @@ export function useLeetCodeStats(username: string = "srujithcoder") {
               totalMedium: 1740,
               hardSolved: hardCount,
               totalHard: 760,
-              ranking: user.profile?.ranking || 376165,
-              rating: contest?.rating ? Math.round(contest.rating) : 1451,
-              attendedContests: contest?.attendedContestsCount || 13,
+              ranking: user.profile?.ranking || 372561,
+              rating: contest?.rating ? Math.round(contest.rating) : 1412,
+              attendedContests: contest?.attendedContestsCount || 14,
               streak: user.userCalendar?.streak || 6,
               activeDays: user.userCalendar?.totalActiveDays || 125,
               topLanguage: langStr,
@@ -210,27 +234,12 @@ export function useLeetCodeStats(username: string = "srujithcoder") {
             setStatus("live");
             return;
           }
-
-          // Alfa API response format
-          if (json?.totalSolved || json?.totalSolved === 0) {
-            setData((prev) => ({
-              ...prev,
-              totalSolved: json.totalSolved || prev.totalSolved,
-              easySolved: json.easySolved || prev.easySolved,
-              mediumSolved: json.mediumSolved || prev.mediumSolved,
-              hardSolved: json.hardSolved || prev.hardSolved,
-              ranking: json.ranking || prev.ranking,
-            }));
-            setStatus("live");
-            return;
-          }
         }
       } catch {
-        // try next method
+        // try next
       }
     }
 
-    // Verified live state fallback
     setData(INITIAL_LEETCODE);
     setStatus("verified");
   }, [username]);

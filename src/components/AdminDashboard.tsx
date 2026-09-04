@@ -3,6 +3,7 @@ import {
   usePortfolioStore,
   ProjectItem,
   CertItem,
+  ExperienceItem,
   PersonalInfo,
 } from "../hooks/usePortfolioStore";
 
@@ -11,8 +12,22 @@ const ICON_PRESETS = ["🎓", "📊", "⚡", "🗄️", "🧩", "🔷", "🔶", 
 
 export default function AdminDashboard({ onExit }: { onExit: () => void }) {
   const store = usePortfolioStore();
-  const [activeTab, setActiveTab] = useState<"certs" | "projects" | "cp" | "resume" | "skills" | "backup">("certs");
+  const [activeTab, setActiveTab] = useState<"experience" | "certs" | "projects" | "cp" | "resume" | "skills" | "backup">("experience");
   const [notification, setNotification] = useState<string | null>(null);
+
+  // Experience form state
+  const [editingExpId, setEditingExpId] = useState<string | null>(null);
+  const [expRole, setExpRole] = useState("");
+  const [expCompany, setExpCompany] = useState("");
+  const [expLocation, setExpLocation] = useState("");
+  const [expPeriod, setExpPeriod] = useState("");
+  const [expStatus, setExpStatus] = useState<"Completed" | "Current" | "Upcoming">("Completed");
+  const [expType, setExpType] = useState("Internship");
+  const [expAccent, setExpAccent] = useState("#10b981");
+  const [expBadge, setExpBadge] = useState("Certificate");
+  const [expCertificateUrl, setExpCertificateUrl] = useState("");
+  const [expHighlights, setExpHighlights] = useState("");
+  const [expSkills, setExpSkills] = useState("");
 
   // Project form state
   const [editingProjId, setEditingProjId] = useState<string | null>(null);
@@ -192,6 +207,83 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
     setCertColor(c.color);
     setCertBg(c.bg);
     setCertUrl(c.credentialUrl || "");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // ── Experience Handlers ──
+  const handleSaveExperience = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!expRole.trim() || !expCompany.trim()) return;
+
+    const highlightsArr = expHighlights
+      .split("\n")
+      .map((h) => h.trim().replace(/^[•\-\*]\s*/, ""))
+      .filter(Boolean);
+
+    const skillsArr = expSkills
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (editingExpId) {
+      store.updateExperience(editingExpId, {
+        role: expRole.trim(),
+        company: expCompany.trim(),
+        location: expLocation.trim() || "Andhra Pradesh, India (On-site)",
+        period: expPeriod.trim() || "May 2026 – Jun 2026",
+        status: expStatus,
+        type: expType.trim() || "Internship",
+        accent: expAccent,
+        badge: expBadge.trim() || undefined,
+        certificateUrl: expCertificateUrl.trim() || undefined,
+        highlights: highlightsArr.length > 0 ? highlightsArr : ["Developed and maintained full-stack web applications."],
+        skills: skillsArr,
+      });
+      showNotice(`Updated experience "${expRole}" at ${expCompany}`);
+      setEditingExpId(null);
+    } else {
+      store.addExperience({
+        role: expRole.trim(),
+        company: expCompany.trim(),
+        location: expLocation.trim() || "Andhra Pradesh, India (On-site)",
+        period: expPeriod.trim() || "May 2026 – Jun 2026",
+        status: expStatus,
+        type: expType.trim() || "Internship",
+        accent: expAccent,
+        badge: expBadge.trim() || undefined,
+        certificateUrl: expCertificateUrl.trim() || undefined,
+        highlights: highlightsArr.length > 0 ? highlightsArr : ["Developed and maintained full-stack web applications."],
+        skills: skillsArr,
+      });
+      showNotice(`Added new experience "${expRole}" at ${expCompany}`);
+    }
+
+    setExpRole("");
+    setExpCompany("");
+    setExpLocation("");
+    setExpPeriod("");
+    setExpStatus("Completed");
+    setExpType("Internship");
+    setExpAccent("#10b981");
+    setExpBadge("Certificate");
+    setExpCertificateUrl("");
+    setExpHighlights("");
+    setExpSkills("");
+  };
+
+  const handleEditExperience = (exp: ExperienceItem) => {
+    setEditingExpId(exp.id);
+    setExpRole(exp.role);
+    setExpCompany(exp.company);
+    setExpLocation(exp.location);
+    setExpPeriod(exp.period);
+    setExpStatus(exp.status);
+    setExpType(exp.type);
+    setExpAccent(exp.accent || "#10b981");
+    setExpBadge(exp.badge || "");
+    setExpCertificateUrl(exp.certificateUrl || "");
+    setExpHighlights((exp.highlights || []).join("\n"));
+    setExpSkills((exp.skills || []).join(", "));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -399,6 +491,7 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
           }}
         >
           {[
+            { id: "experience", label: "💼 Work Experience", count: store.experiences.length },
             { id: "certs", label: "🎓 Certifications (Drive Links)", count: store.certs.length },
             { id: "cp", label: "⚡ Exact CP Numbers & Ratings" },
             { id: "projects", label: "📁 Projects", count: store.projects.length },
@@ -444,6 +537,367 @@ export default function AdminDashboard({ onExit }: { onExit: () => void }) {
             </button>
           ))}
         </div>
+
+        {/* ── TAB: WORK EXPERIENCE ── */}
+        {activeTab === "experience" && (
+          <div style={{ marginTop: "2rem", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "2rem", alignItems: "start" }}>
+            {/* Experience Form */}
+            <div
+              style={{
+                background: "rgba(18, 17, 30, 0.75)",
+                border: "1px solid rgba(16, 185, 129, 0.3)",
+                borderRadius: "20px",
+                padding: "1.75rem",
+              }}
+            >
+              <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.5rem", fontWeight: 700, color: "#ffffff", marginBottom: "0.5rem" }}>
+                {editingExpId ? "Edit Work Experience" : "Add Work Experience"}
+              </h2>
+              <p style={{ color: "#a1a1aa", fontSize: "0.82rem", lineHeight: 1.5, marginBottom: "1.5rem" }}>
+                Add your internship or job history. Experience items render with 3D physics cards, timeline node connectors, bullet highlights, and official certificate verification buttons.
+              </p>
+
+              <form onSubmit={handleSaveExperience} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                    Role / Position Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Full Stack Development Intern"
+                    value={expRole}
+                    onChange={(e) => setExpRole(e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                      Company / Organization *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Technical Hub Private Limited"
+                      value={expCompany}
+                      onChange={(e) => setExpCompany(e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                      Location
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Andhra Pradesh, India (On-site)"
+                      value={expLocation}
+                      onChange={(e) => setExpLocation(e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                      Duration / Period
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. May 2026 – Jun 2026"
+                      value={expPeriod}
+                      onChange={(e) => setExpPeriod(e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                      Status
+                    </label>
+                    <select
+                      value={expStatus}
+                      onChange={(e) => setExpStatus(e.target.value as "Completed" | "Current" | "Upcoming")}
+                      style={inputStyle}
+                    >
+                      <option value="Completed">Completed</option>
+                      <option value="Current">Current / Ongoing</option>
+                      <option value="Upcoming">Upcoming</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                      Badge Label
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Certificate, Distinction"
+                      value={expBadge}
+                      onChange={(e) => setExpBadge(e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                      Employment Type
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Internship, Full-Time"
+                      value={expType}
+                      onChange={(e) => setExpType(e.target.value)}
+                      style={inputStyle}
+                    />
+                  </div>
+                </div>
+
+                {/* Certificate / Verification Link */}
+                <div style={{ background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.3)", borderRadius: "12px", padding: "1rem" }}>
+                  <label style={{ display: "block", fontSize: "0.75rem", fontFamily: "'JetBrains Mono', monospace", color: "#34d399", marginBottom: "0.35rem", fontWeight: 700 }}>
+                    📜 Certificate Google Drive / Verification Link
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://drive.google.com/file/d/.../view?usp=sharing"
+                    value={expCertificateUrl}
+                    onChange={(e) => setExpCertificateUrl(e.target.value)}
+                    style={{ ...inputStyle, background: "rgba(0, 0, 0, 0.4)", border: "1px solid rgba(16, 185, 129, 0.4)" }}
+                  />
+                  <p style={{ fontSize: "0.68rem", color: "#94a3b8", margin: "6px 0 0 0", lineHeight: 1.4 }}>
+                    💡 <strong>Tip:</strong> Adds a direct <strong>"📜 View Certificate ↗"</strong> action button to the experience card.
+                  </p>
+                </div>
+
+                {/* Highlights / Bullet Points */}
+                <div>
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                    Key Highlights & Responsibilities (1 bullet per line)
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder={"Developed and maintained full-stack web applications using Next.js, TypeScript, and PostgreSQL.\nCollaborated with mentors and senior developers to deliver production features.\nIntegrated AI APIs (Claude, Gemini) into web applications."}
+                    value={expHighlights}
+                    onChange={(e) => setExpHighlights(e.target.value)}
+                    style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit" }}
+                  />
+                </div>
+
+                {/* Skills / Tech Stack */}
+                <div>
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                    Skills & Tech Stack (comma separated)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Next.js, TypeScript, PostgreSQL, Claude API, Gemini API, Git"
+                    value={expSkills}
+                    onChange={(e) => setExpSkills(e.target.value)}
+                    style={inputStyle}
+                  />
+                </div>
+
+                {/* Accent Color Preset */}
+                <div>
+                  <label style={{ display: "block", fontSize: "0.72rem", fontFamily: "'JetBrains Mono', monospace", color: "#a1a1aa", marginBottom: "0.3rem", fontWeight: 600 }}>
+                    Accent Glow Color
+                  </label>
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap" }}>
+                    {COLOR_PRESETS.map((col) => (
+                      <button
+                        type="button"
+                        key={col}
+                        onClick={() => setExpAccent(col)}
+                        style={{
+                          width: 28,
+                          height: 28,
+                          borderRadius: "50%",
+                          background: col,
+                          border: expAccent === col ? "3px solid #ffffff" : "2px solid transparent",
+                          cursor: "pointer",
+                          boxShadow: expAccent === col ? `0 0 10px ${col}` : "none",
+                        }}
+                      />
+                    ))}
+                    <input
+                      type="color"
+                      value={expAccent}
+                      onChange={(e) => setExpAccent(e.target.value)}
+                      style={{ width: 32, height: 32, borderRadius: "8px", border: "none", cursor: "pointer", background: "transparent" }}
+                    />
+                  </div>
+                </div>
+
+                {/* Form Buttons */}
+                <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.5rem" }}>
+                  <button
+                    type="submit"
+                    style={{
+                      flex: 1,
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: "0.85rem",
+                      fontWeight: 700,
+                      background: "linear-gradient(135deg, #10b981 0%, #06b6d4 100%)",
+                      color: "#ffffff",
+                      border: "none",
+                      borderRadius: "10px",
+                      padding: "0.85rem",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 15px rgba(16, 185, 129, 0.4)",
+                    }}
+                  >
+                    {editingExpId ? "Save Experience Changes" : "+ Add Experience"}
+                  </button>
+                  {editingExpId && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingExpId(null);
+                        setExpRole("");
+                        setExpCompany("");
+                        setExpCertificateUrl("");
+                        setExpHighlights("");
+                        setExpSkills("");
+                      }}
+                      style={{
+                        fontFamily: "'JetBrains Mono', monospace",
+                        fontSize: "0.8rem",
+                        background: "rgba(255, 255, 255, 0.08)",
+                        color: "#d6d0c4",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        borderRadius: "10px",
+                        padding: "0.85rem 1.25rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+              </form>
+            </div>
+
+            {/* Experience List */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <h3 style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.85rem", color: "#a1a1aa", letterSpacing: "0.1em", textTransform: "uppercase", fontWeight: 700 }}>
+                Recorded Work Experiences ({store.experiences.length})
+              </h3>
+              {store.experiences.map((exp) => (
+                <div
+                  key={exp.id}
+                  style={{
+                    background: "rgba(18, 17, 30, 0.75)",
+                    border: `1.5px solid ${editingExpId === exp.id ? "#10b981" : "rgba(255, 255, 255, 0.08)"}`,
+                    borderRadius: "16px",
+                    padding: "1.25rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.75rem",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                        <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1.05rem", fontWeight: 700, color: "#ffffff", margin: 0 }}>
+                          {exp.role}
+                        </p>
+                        {exp.badge && (
+                          <span
+                            style={{
+                              fontFamily: "'JetBrains Mono', monospace",
+                              fontSize: "0.6rem",
+                              color: "#10b981",
+                              background: "rgba(16, 185, 129, 0.15)",
+                              border: "1px solid rgba(16, 185, 129, 0.3)",
+                              borderRadius: "999px",
+                              padding: "0.15rem 0.5rem",
+                              fontWeight: 700,
+                            }}
+                          >
+                            [{exp.badge}]
+                          </span>
+                        )}
+                      </div>
+                      <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.75rem", color: exp.accent || "#10b981", margin: "3px 0 0 0", fontWeight: 600 }}>
+                        {exp.company}
+                      </p>
+                      <p style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.68rem", color: "#94a3b8", margin: "2px 0 0 0" }}>
+                        🗓️ {exp.period} · 📍 {exp.location}
+                      </p>
+                    </div>
+
+                    <div style={{ display: "flex", gap: "0.4rem" }}>
+                      <button
+                        onClick={() => handleEditExperience(exp)}
+                        style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontSize: "0.65rem",
+                          background: "rgba(16, 185, 129, 0.15)",
+                          color: "#6ee7b7",
+                          border: "1px solid rgba(16, 185, 129, 0.3)",
+                          borderRadius: "6px",
+                          padding: "0.35rem 0.65rem",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm(`Delete experience "${exp.role} at ${exp.company}"?`)) {
+                            store.deleteExperience(exp.id);
+                            showNotice(`Deleted "${exp.role}"`);
+                          }
+                        }}
+                        style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontSize: "0.65rem",
+                          background: "rgba(244, 63, 94, 0.12)",
+                          color: "#f43f5e",
+                          border: "1px solid rgba(244, 63, 94, 0.3)",
+                          borderRadius: "6px",
+                          padding: "0.35rem 0.65rem",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Highlights preview */}
+                  {Array.isArray(exp.highlights) && exp.highlights.length > 0 && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", background: "rgba(0, 0, 0, 0.25)", padding: "0.6rem 0.8rem", borderRadius: "8px" }}>
+                      {exp.highlights.slice(0, 2).map((h, hIdx) => (
+                        <p key={hIdx} style={{ fontSize: "0.72rem", color: "#cbd5e1", margin: 0, lineHeight: 1.4 }}>
+                          ✦ {h}
+                        </p>
+                      ))}
+                      {exp.highlights.length > 2 && (
+                        <p style={{ fontSize: "0.65rem", color: "#64748b", margin: 0 }}>
+                          +{exp.highlights.length - 2} more bullet highlights
+                        </p>
+                      )}
+                    </div>
+                  )}
+
+                  {exp.certificateUrl && (
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "rgba(0, 0, 0, 0.3)", borderRadius: "8px", padding: "0.4rem 0.75rem" }}>
+                      <span style={{ fontSize: "0.75rem" }}>📜</span>
+                      <a href={exp.certificateUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: "0.72rem", color: "#34d399", textDecoration: "none", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {exp.certificateUrl}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* ── TAB: EXACT CP NUMBERS & RATINGS ── */}
         {activeTab === "cp" && (
