@@ -11,7 +11,6 @@ import HeroHUD from "./components/HeroHUD";
 import NeuralGlobe3D from "./components/NeuralGlobe3D";
 import HoloCard from "./components/HoloCard";
 import ExperienceSection from "./components/ExperienceSection";
-import InteractiveTerminal from "./components/InteractiveTerminal";
 import ScrollProgress from "./components/ScrollProgress";
 import CursorGlow from "./components/CursorGlow";
 import BackToTop from "./components/BackToTop";
@@ -775,43 +774,161 @@ export default function App() {
         </div>
       </nav>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Backdrop & Drawer */}
       {mobileMenuOpen && (
         <div
+          onClick={() => setMobileMenuOpen(false)}
           style={{
             position: "fixed",
-            top: 70,
-            left: 0,
-            right: 0,
-            zIndex: 39,
-            background: isDark ? "rgba(15, 14, 28, 0.96)" : "rgba(255, 255, 255, 0.96)",
-            backdropFilter: "blur(20px)",
-            borderBottom: `1px solid ${cardBorder}`,
-            padding: "1.5rem 2rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1.25rem",
+            inset: 0,
+            zIndex: 49,
+            background: "rgba(0, 0, 0, 0.65)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+            animation: "fadeIn 0.2s ease-out",
           }}
         >
-          {NAV.map(({ id, label }) => (
-            <button
-              key={id}
-              onClick={() => scrollTo(id)}
-              style={{
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: "0.85rem",
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: activeSection === id ? "#6366f1" : textMuted,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                textAlign: "left",
-              }}
-            >
-              {label}
-            </button>
-          ))}
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "absolute",
+              top: 70,
+              left: 0,
+              right: 0,
+              background: isDark ? "rgba(6, 20, 15, 0.96)" : "rgba(255, 255, 255, 0.97)",
+              backdropFilter: "blur(28px)",
+              WebkitBackdropFilter: "blur(28px)",
+              borderBottom: `1px solid ${isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(99, 102, 241, 0.2)"}`,
+              borderRadius: "0 0 28px 28px",
+              padding: "1.5rem clamp(1rem, 4vw, 2rem) 2rem",
+              display: "flex",
+              flexDirection: "column",
+              gap: "1.25rem",
+              boxShadow: isDark ? "0 25px 60px rgba(0, 0, 0, 0.9)" : "0 20px 40px rgba(0, 0, 0, 0.15)",
+              animation: "widgetPop 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          >
+            {/* Quick Action Pills in Mobile Menu */}
+            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", paddingBottom: "1rem", borderBottom: `1px solid ${cardBorder}` }}>
+              <button
+                onClick={() => {
+                  soundManager.playClick();
+                  setMobileMenuOpen(false);
+                  setIsCmdOpen(true);
+                }}
+                style={{
+                  flex: 1,
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: "0.78rem",
+                  fontWeight: 700,
+                  color: isDark ? "#34d399" : "#4f46e5",
+                  background: isDark ? "rgba(52, 211, 153, 0.1)" : "rgba(99, 102, 241, 0.08)",
+                  border: `1px solid ${isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(99, 102, 241, 0.2)"}`,
+                  borderRadius: "10px",
+                  padding: "0.55rem 0.75rem",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.35rem",
+                  cursor: "pointer",
+                }}
+              >
+                <span>⚡</span> Commands
+              </button>
+
+              <button
+                onClick={() => {
+                  soundManager.playClick();
+                  toggleTheme();
+                }}
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: "0.78rem",
+                  fontWeight: 700,
+                  color: textMain,
+                  background: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.04)",
+                  border: `1px solid ${cardBorder}`,
+                  borderRadius: "10px",
+                  padding: "0.55rem 0.75rem",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "0.35rem",
+                  cursor: "pointer",
+                }}
+              >
+                <span>{isDark ? "☀️ Light" : "🌙 Dark"}</span>
+              </button>
+
+              {personalInfo.resumeUrl && (
+                <a
+                  href={personalInfo.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => soundManager.playClick()}
+                  style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: "0.78rem",
+                    fontWeight: 700,
+                    color: "#ffffff",
+                    background: "linear-gradient(135deg, #6366f1, #06b6d4)",
+                    borderRadius: "10px",
+                    padding: "0.55rem 0.9rem",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.35rem",
+                    textDecoration: "none",
+                  }}
+                >
+                  <span>📄</span> CV
+                </a>
+              )}
+            </div>
+
+            {/* Nav Links */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              {NAV.map(({ id, label }, i) => (
+                <button
+                  key={id}
+                  onClick={() => {
+                    soundManager.playClick();
+                    scrollTo(id);
+                  }}
+                  style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    fontSize: "1rem",
+                    fontWeight: activeSection === id ? 800 : 600,
+                    color: activeSection === id ? (isDark ? "#34d399" : "#4f46e5") : textMain,
+                    background: activeSection === id
+                      ? (isDark ? "rgba(52, 211, 153, 0.12)" : "rgba(99, 102, 241, 0.08)")
+                      : "transparent",
+                    border: activeSection === id
+                      ? `1px solid ${isDark ? "rgba(52, 211, 153, 0.3)" : "rgba(99, 102, 241, 0.2)"}`
+                      : "1px solid transparent",
+                    borderRadius: "12px",
+                    padding: "0.75rem 1rem",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    transition: "all 0.2s ease",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.7rem", color: textMuted }}>
+                      0{i + 1}
+                    </span>
+                    <span>{label}</span>
+                  </div>
+                  {activeSection === id && (
+                    <span style={{ fontSize: "0.8rem", color: isDark ? "#34d399" : "#6366f1" }}>●</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -1124,7 +1241,7 @@ export default function App() {
       </section>
 
       {/* ── ABOUT SECTION ── */}
-      <section id="about" style={{ padding: "6rem clamp(1.5rem, 5vw, 6rem)", position: "relative", zIndex: 10 }}>
+      <section id="about" style={{ padding: "clamp(4.5rem, 8vh, 6rem) clamp(1rem, 4vw, 6rem)", position: "relative", zIndex: 10 }}>
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#6366f1", letterSpacing: "0.2em", fontWeight: 700 }}>
@@ -1217,17 +1334,6 @@ export default function App() {
                 </div>
               </Card3D>
             </div>
-
-            {/* Live Interactive Code Terminal / Sandbox Runner */}
-            <div style={{ marginTop: "3.5rem" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
-                <span style={{ fontSize: "0.8rem", color: "#10b981" }}>▶</span>
-                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: isDark ? "#6ee7b7" : "#059669", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-                  Interactive Code Execution Sandbox (Click 'Run Sandbox' to execute live mock pipelines)
-                </span>
-              </div>
-              <InteractiveTerminal isDark={isDark} />
-            </div>
           </div>
         </section>
 
@@ -1235,7 +1341,7 @@ export default function App() {
       <ExperienceSection experiences={store.experiences} isDark={isDark} />
 
       {/* ── PROJECTS SECTION ── */}
-      <section id="projects" style={{ padding: "6rem clamp(1.5rem, 5vw, 6rem)", position: "relative", zIndex: 10 }}>
+      <section id="projects" style={{ padding: "clamp(4.5rem, 8vh, 6rem) clamp(1rem, 4vw, 6rem)", position: "relative", zIndex: 10 }}>
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#f43f5e", letterSpacing: "0.2em", fontWeight: 700 }}>
@@ -1425,7 +1531,7 @@ export default function App() {
       </section>
 
       {/* ── SKILLS SECTION ── */}
-      <section id="skills" style={{ padding: "6rem clamp(1.5rem, 5vw, 6rem)", position: "relative", zIndex: 10 }}>
+      <section id="skills" style={{ padding: "clamp(4.5rem, 8vh, 6rem) clamp(1rem, 4vw, 6rem)", position: "relative", zIndex: 10 }}>
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#a855f7", letterSpacing: "0.2em", fontWeight: 700 }}>
@@ -1566,7 +1672,7 @@ export default function App() {
       </section>
 
       {/* ── CERTIFICATIONS SECTION (WITH DRIVE LINKS) ── */}
-      <section id="certifications" style={{ padding: "6rem clamp(1.5rem, 5vw, 6rem)", position: "relative", zIndex: 10 }}>
+      <section id="certifications" style={{ padding: "clamp(4.5rem, 8vh, 6rem) clamp(1rem, 4vw, 6rem)", position: "relative", zIndex: 10 }}>
         <div style={{ maxWidth: 1300, margin: "0 auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
             <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#f59e0b", letterSpacing: "0.2em", fontWeight: 700 }}>

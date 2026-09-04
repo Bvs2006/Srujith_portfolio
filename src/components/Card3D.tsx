@@ -67,10 +67,14 @@ export default function Card3D({
     }
   };
 
-  // ── 3D Movable Drag Mechanics (Mouse & Touch) ──
+  // ── 3D Movable Drag Mechanics (Mouse Only to preserve natural mobile scroll) ──
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     // Avoid triggering on links or buttons inside card
     if ((e.target as HTMLElement).closest("a, button, input")) {
+      return;
+    }
+    if (e.pointerType === "touch") {
+      // Allow natural touch scrolling on mobile without hijacking
       return;
     }
     dragStartRef.current = { x: e.clientX, y: e.clientY, moved: false };

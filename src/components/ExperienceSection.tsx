@@ -22,7 +22,7 @@ export default function ExperienceSection({ experiences, isDark = true }: Experi
   const items = Array.isArray(experiences) && experiences.length > 0 ? experiences : [];
 
   return (
-    <section id="experience" style={{ padding: "6rem clamp(1.5rem, 5vw, 6rem)", position: "relative", zIndex: 10 }}>
+    <section id="experience" style={{ padding: "clamp(4.5rem, 8vh, 6rem) clamp(1rem, 4vw, 6rem)", position: "relative", zIndex: 10 }}>
       <div style={{ maxWidth: 1300, margin: "0 auto" }}>
         {/* Section Header */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1.25rem" }}>
@@ -35,12 +35,12 @@ export default function ExperienceSection({ experiences, isDark = true }: Experi
           </span>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "3.5rem", flexWrap: "wrap", gap: "1rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "2.5rem", flexWrap: "wrap", gap: "1rem" }}>
           <div>
-            <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(2rem, 4vw, 3.6rem)", fontWeight: 800, lineHeight: 1.08, color: textMain, margin: 0 }}>
+            <h2 style={{ fontFamily: "'Outfit', sans-serif", fontSize: "clamp(1.9rem, 4vw, 3.6rem)", fontWeight: 800, lineHeight: 1.08, color: textMain, margin: 0 }}>
               Work & <span style={{ background: "linear-gradient(135deg, #10b981 0%, #06b6d4 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Experience</span>
             </h2>
-            <p style={{ color: textMuted, fontSize: "0.95rem", margin: "0.5rem 0 0 0" }}>
+            <p style={{ color: textMuted, fontSize: "0.92rem", margin: "0.5rem 0 0 0" }}>
               Practical engineering experience in production web systems, AI API integration, and collaborative Agile development. Click any role to explore key contributions.
             </p>
           </div>
@@ -50,7 +50,7 @@ export default function ExperienceSection({ experiences, isDark = true }: Experi
         </div>
 
         {/* 3D Timeline Container */}
-        <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: "2.5rem" }}>
+        <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: "2rem" }}>
           {/* Vertical Glowing Track Line */}
           <div
             aria-hidden
@@ -58,7 +58,7 @@ export default function ExperienceSection({ experiences, isDark = true }: Experi
               position: "absolute",
               top: 20,
               bottom: 20,
-              left: "clamp(12px, 2.5vw, 24px)",
+              left: "clamp(10px, 1.8vw, 24px)",
               width: 2,
               background: isDark
                 ? "linear-gradient(to bottom, #10b981, #6366f1, transparent)"
@@ -78,7 +78,7 @@ export default function ExperienceSection({ experiences, isDark = true }: Experi
                   position: "relative",
                   display: "grid",
                   gridTemplateColumns: "auto 1fr",
-                  gap: "clamp(1rem, 3vw, 2.5rem)",
+                  gap: "clamp(0.6rem, 2.5vw, 2.5rem)",
                   alignItems: "flex-start",
                   zIndex: 1,
                 }}
@@ -87,8 +87,8 @@ export default function ExperienceSection({ experiences, isDark = true }: Experi
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "1.2rem" }}>
                   <div
                     style={{
-                      width: 28,
-                      height: 28,
+                      width: 24,
+                      height: 24,
                       borderRadius: "50%",
                       background: isDark ? "#0c0b18" : "#ffffff",
                       border: `2.5px solid ${exp.accent || "#10b981"}`,
@@ -98,7 +98,7 @@ export default function ExperienceSection({ experiences, isDark = true }: Experi
                       justifyContent: "center",
                     }}
                   >
-                    <span style={{ width: 8, height: 8, borderRadius: "50%", background: exp.accent || "#10b981" }} />
+                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: exp.accent || "#10b981" }} />
                   </div>
                 </div>
 
@@ -111,8 +111,8 @@ export default function ExperienceSection({ experiences, isDark = true }: Experi
                       backdropFilter: "blur(24px)",
                       WebkitBackdropFilter: "blur(24px)",
                       border: `1px solid ${isExpanded ? (exp.accent || "#10b981") : `${exp.accent || "#10b981"}44`}`,
-                      borderRadius: "26px",
-                      padding: "clamp(1.5rem, 4vw, 2.4rem)",
+                      borderRadius: "24px",
+                      padding: "clamp(1.15rem, 3.5vw, 2.4rem)",
                       display: "flex",
                       flexDirection: "column",
                       gap: "1.25rem",
