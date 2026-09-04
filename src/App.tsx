@@ -11,6 +11,7 @@ import HeroHUD from "./components/HeroHUD";
 import NeuralGlobe3D from "./components/NeuralGlobe3D";
 import HoloCard from "./components/HoloCard";
 import ExperienceSection from "./components/ExperienceSection";
+import MoneyJumper from "./components/MoneyJumper";
 import { usePortfolioStore, ProjectItem, CertItem } from "./hooks/usePortfolioStore";
 import { useTheme } from "./hooks/useTheme";
 
@@ -199,6 +200,9 @@ export default function App() {
 
       {/* ── Live Date & Time Bottom Button ── */}
       <DateTimeWidget email={personalInfo.email} isDark={isDark} />
+
+      {/* ── Interactive 3D Jumping Money Mascot ── */}
+      <MoneyJumper isDark={isDark} />
 
       {/* ── Certificate Preview Modal ── */}
       {selectedCert && (
