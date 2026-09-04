@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ParticleCanvas from "./components/ParticleCanvas";
 import Card3D from "./components/Card3D";
 import WelcomeScreen from "./components/WelcomeScreen";
@@ -11,6 +11,11 @@ import HeroHUD from "./components/HeroHUD";
 import NeuralGlobe3D from "./components/NeuralGlobe3D";
 import HoloCard from "./components/HoloCard";
 import ExperienceSection from "./components/ExperienceSection";
+import ScrollProgress from "./components/ScrollProgress";
+import CursorGlow from "./components/CursorGlow";
+import BackToTop from "./components/BackToTop";
+import CommandPalette from "./components/CommandPalette";
+import { soundManager } from "./components/SoundFX";
 import { usePortfolioStore, ProjectItem, CertItem } from "./hooks/usePortfolioStore";
 import { useTheme } from "./hooks/useTheme";
 
@@ -25,6 +30,13 @@ const NAV = [
   { id: "contact", label: "Contact" },
 ];
 
+const ROLES = [
+  "Full-Stack Software Engineer",
+  "AI & ML Systems Integrator",
+  "Competitive Programmer (670+ Solved)",
+  "Next.js, TypeScript & PostgreSQL",
+];
+
 export default function App() {
   const store = usePortfolioStore();
   const { isDark, toggleTheme } = useTheme();
@@ -34,6 +46,13 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(null);
   const [selectedCert, setSelectedCert] = useState<CertItem | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isCmdOpen, setIsCmdOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(soundManager.isMuted);
+
+  // Typewriter rotating roles
+  const [roleIndex, setRoleIndex] = useState(0);
+  const [typedText, setTypedText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Stealth URL-only Admin routing (/admin or #admin)
   const [isAdmin, setIsAdmin] = useState<boolean>(() => {
@@ -64,6 +83,35 @@ export default function App() {
       window.removeEventListener("hashchange", handleUrlChange);
     };
   }, []);
+
+  // Typewriter effect loop
+  useEffect(() => {
+    const currentFull = ROLES[roleIndex];
+    let timeout: NodeJS.Timeout;
+
+    if (!isDeleting) {
+      if (typedText.length < currentFull.length) {
+        timeout = setTimeout(() => {
+          setTypedText(currentFull.slice(0, typedText.length + 1));
+        }, 55);
+      } else {
+        timeout = setTimeout(() => {
+          setIsDeleting(true);
+        }, 2200);
+      }
+    } else {
+      if (typedText.length > 0) {
+        timeout = setTimeout(() => {
+          setTypedText(currentFull.slice(0, typedText.length - 1));
+        }, 28);
+      } else {
+        setIsDeleting(false);
+        setRoleIndex((prev) => (prev + 1) % ROLES.length);
+      }
+    }
+
+    return () => clearTimeout(timeout);
+  }, [typedText, isDeleting, roleIndex]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -182,6 +230,25 @@ export default function App() {
           zIndex: 1,
           animation: "pulseGlow 14s ease-in-out infinite 3s",
         }}
+      />
+
+      {/* ── Top Glowing Scroll Progress Bar ── */}
+      <ScrollProgress isDark={isDark} />
+
+      {/* ── Interactive Cursor Spotlight Glow ── */}
+      <CursorGlow isDark={isDark} />
+
+      {/* ── Back to Top Floating Button with Progress Ring ── */}
+      <BackToTop isDark={isDark} />
+
+      {/* ── Command Palette (Ctrl + K) ── */}
+      <CommandPalette
+        isOpen={isCmdOpen}
+        onClose={() => setIsCmdOpen(false)}
+        isDark={isDark}
+        toggleTheme={toggleTheme}
+        projects={projects}
+        personalInfo={personalInfo}
       />
 
       {/* ── Welcome Screen ── */}
@@ -579,16 +646,91 @@ export default function App() {
           ))}
         </div>
 
-        {/* Action Buttons: Theme Toggle + Resume + Mobile Toggle */}
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        {/* Action Buttons: Quick Cmd + Sound + Theme Toggle + Resume + Mobile Toggle */}
+        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+          {/* Quick Command Palette Button */}
+          <button
+            id="cmd-palette-trigger"
+            onClick={() => {
+              soundManager.playClick();
+              setIsCmdOpen(true);
+            }}
+            onMouseEnter={() => soundManager.playHover()}
+            title="Command Palette (Ctrl + K)"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "0.4rem",
+              background: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.04)",
+              border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.1)"}`,
+              borderRadius: "999px",
+              padding: "0.35rem 0.75rem",
+              cursor: "pointer",
+              color: isDark ? "#cbd5e1" : "#475569",
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: "0.75rem",
+              fontWeight: 600,
+              transition: "all 0.2s ease",
+            }}
+          >
+            <span>⚡</span>
+            <span className="hidden sm:inline">Commands</span>
+            <kbd
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: "0.62rem",
+                background: isDark ? "rgba(0, 0, 0, 0.4)" : "rgba(255, 255, 255, 0.8)",
+                padding: "1px 5px",
+                borderRadius: "4px",
+                color: isDark ? "#94a3b8" : "#64748b",
+                border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.08)"}`,
+              }}
+            >
+              ⌘K
+            </kbd>
+          </button>
+
+          {/* Sound FX Toggle Button */}
+          <button
+            onClick={() => {
+              const muted = soundManager.toggleMute();
+              setIsMuted(muted);
+            }}
+            title={isMuted ? "Enable Sound Effects (Sci-Fi Audio)" : "Mute Sound Effects"}
+            style={{
+              background: isDark ? "rgba(255, 255, 255, 0.06)" : "rgba(0, 0, 0, 0.04)",
+              border: `1px solid ${isDark ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.1)"}`,
+              borderRadius: "50%",
+              width: 34,
+              height: 34,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: isDark ? "#ffffff" : "#0f172a",
+              fontSize: "0.85rem",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {isMuted ? "🔇" : "🔊"}
+          </button>
+
           {/* Dark / Light Mode Toggle */}
-          <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+          <ThemeToggle
+            isDark={isDark}
+            onToggle={() => {
+              soundManager.playClick(800, 0.05);
+              toggleTheme();
+            }}
+          />
 
           {personalInfo.resumeUrl && (
             <a
               href={personalInfo.resumeUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => soundManager.playClick()}
+              onMouseEnter={() => soundManager.playHover()}
               style={{
                 fontFamily: "'Outfit', sans-serif",
                 fontSize: "0.8rem",
@@ -610,7 +752,10 @@ export default function App() {
           )}
 
           <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => {
+              soundManager.playClick();
+              setMobileMenuOpen(!mobileMenuOpen);
+            }}
             className="md:hidden"
             style={{
               background: "none",
@@ -716,7 +861,7 @@ export default function App() {
                 fontWeight: 900,
                 color: textMain,
                 letterSpacing: "-0.03em",
-                margin: "0 0 1.25rem 0",
+                margin: "0 0 1rem 0",
               }}
             >
               Venkata <br />
@@ -726,6 +871,42 @@ export default function App() {
               Bellamkonda
             </h1>
 
+            {/* Dynamic Typewriter Role Subtitle */}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px",
+                marginBottom: "1.25rem",
+                minHeight: "28px",
+              }}
+            >
+              <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.72rem", color: "#34d399", fontWeight: 700 }}>
+                &gt;
+              </span>
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: "clamp(0.85rem, 1.5vw, 1.05rem)",
+                  fontWeight: 700,
+                  color: isDark ? "#38bdf8" : "#0284c7",
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {typedText}
+              </span>
+              <span
+                style={{
+                  display: "inline-block",
+                  width: 8,
+                  height: 18,
+                  background: isDark ? "#34d399" : "#6366f1",
+                  borderRadius: "2px",
+                  animation: "pulseGlow 0.8s ease-in-out infinite",
+                }}
+              />
+            </div>
+
             <p style={{ fontSize: "clamp(1rem, 1.8vw, 1.15rem)", color: textMuted, lineHeight: 1.75, maxWidth: 520, margin: "0 0 2.25rem 0" }}>
               {personalInfo.tagline}
             </p>
@@ -733,7 +914,13 @@ export default function App() {
             {/* CTAs */}
             <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "center" }}>
               <button
-                onClick={() => scrollTo("projects")}
+                onClick={() => {
+                  soundManager.playClick();
+                  scrollTo("projects");
+                }}
+                onMouseEnter={() => {
+                  soundManager.playHover();
+                }}
                 style={{
                   fontFamily: "'Outfit', sans-serif",
                   fontSize: "0.9rem",
@@ -750,6 +937,7 @@ export default function App() {
                   transition: "all 0.25s",
                 }}
                 onMouseEnter={(e) => {
+                  soundManager.playHover();
                   e.currentTarget.style.transform = "translateY(-3px) scale(1.02)";
                   e.currentTarget.style.boxShadow = "0 15px 40px rgba(99, 102, 241, 0.65)";
                 }}
@@ -766,6 +954,8 @@ export default function App() {
                   href={personalInfo.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => soundManager.playClick()}
+                  onMouseEnter={() => soundManager.playHover()}
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     fontSize: "0.9rem",
@@ -782,6 +972,7 @@ export default function App() {
                     boxShadow: isDark ? "none" : "0 4px 15px rgba(99, 102, 241, 0.1)",
                   }}
                   onMouseEnter={(e) => {
+                    soundManager.playHover();
                     e.currentTarget.style.borderColor = "#a5b4fc";
                     e.currentTarget.style.transform = "translateY(-3px)";
                   }}
